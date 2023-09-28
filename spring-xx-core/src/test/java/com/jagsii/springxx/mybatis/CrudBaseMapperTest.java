@@ -135,6 +135,69 @@ class CrudBaseMapperTest extends MapperTests {
     }
 
     @Test
+    void upsert() {
+        User entity = new User();
+        entity.setName("Foo");
+        entity.setAddress("abc");
+        entity.setBirth(LocalDate.parse("2000-01-01"));
+        LocalDateTime now = LocalDateTime.now();
+        entity.setCreateTime(now);
+        entity.setUpdateTime(now);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+            mapper.upsert(entity);
+            Long id = entity.getId();
+            assertThat(id).isNotNull();
+            User actual = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?", new BeanPropertyRowMapper<>(User.class), id);
+            assertThat(actual).hasFieldOrPropertyWithValue("name", "Foo")
+                    .hasFieldOrPropertyWithValue("address", "abc")
+                    .hasFieldOrPropertyWithValue("birth", LocalDate.parse("2000-01-01"))
+                    .hasFieldOrPropertyWithValue("createTime", now)
+                    .hasFieldOrPropertyWithValue("updateTime", now);
+
+            entity.setName("Fish");
+            entity.setBirth(null);
+            mapper.upsert(entity);
+            actual = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?", new BeanPropertyRowMapper<>(User.class), id);
+            assertThat(actual).hasFieldOrPropertyWithValue("name", "Fish")
+                    .hasFieldOrPropertyWithValue("address", "abc")
+                    .hasFieldOrPropertyWithValue("birth", null)
+                    .hasFieldOrPropertyWithValue("createTime", now)
+                    .hasFieldOrPropertyWithValue("updateTime", now);
+        }
+    }
+
+    @Test
+    void upsertSelective() {
+        User entity = new User();
+        entity.setName("Foo");
+        entity.setBirth(LocalDate.parse("2000-01-01"));
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+            mapper.upsertSelective(entity);
+            assertThat(entity.getId()).isNotNull();
+            User actual = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?", new BeanPropertyRowMapper<>(User.class), entity.getId());
+            assertThat(actual).isNotNull();
+            assertThat(actual).hasFieldOrPropertyWithValue("name", "Foo")
+                    .hasFieldOrPropertyWithValue("birth", LocalDate.parse("2000-01-01"))
+                    .hasFieldOrPropertyWithValue("address", "");
+            assertThat(actual.getCreateTime()).isNotNull();
+            assertThat(actual.getUpdateTime()).isNotNull();
+
+            entity.setName("Fish");
+            entity.setBirth(null);
+            mapper.upsertSelective(entity);
+            actual = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?", new BeanPropertyRowMapper<>(User.class), entity.getId());
+            assertThat(actual).isNotNull();
+            assertThat(actual).hasFieldOrPropertyWithValue("name", "Fish")
+                    .hasFieldOrPropertyWithValue("birth", LocalDate.parse("2000-01-01"))
+                    .hasFieldOrPropertyWithValue("address", "");
+            assertThat(actual.getCreateTime()).isNotNull();
+            assertThat(actual.getUpdateTime()).isNotNull();
+        }
+    }
+
+    @Test
     void deleteByPrimaryKey() {
         Long id = insertForGeneratedId("INSERT INTO `user`(`name`)VALUES(?)", "Foo");
         Integer actual = jdbcTemplate.queryForObject("SELECT COUNT(0) FROM `user` WHERE id = ?", Integer.class, id);

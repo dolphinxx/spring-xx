@@ -48,6 +48,20 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
     }
 
     @Test
+    void buildUpsert() throws Exception {
+        String actual = CrudSqlBuilder.buildUpsert(getContext(UserMapper.class.getMethod("upsert", Object.class))).trim();
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{id}, #{name}, #{address}, #{birth}, #{createTime}, #{updateTime}, </trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \">`name` = #{name}, `address` = #{address}, `birth` = #{birth}, `create_time` = #{createTime}, `update_time` = #{updateTime}, </trim></script>";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void buildUpsertSelective() throws Exception {
+        String actual = CrudSqlBuilder.buildUpsertSelective(getContext(UserMapper.class.getMethod("upsertSelective", Object.class))).trim();
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">`id`, </if><if test=\"name != null\">`name`, </if><if test=\"address != null\">`address`, </if><if test=\"birth != null\">`birth`, </if><if test=\"createTime != null\">`create_time`, </if><if test=\"updateTime != null\">`update_time`, </if></trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">#{id}, </if><if test=\"name != null\">#{name}, </if><if test=\"address != null\">#{address}, </if><if test=\"birth != null\">#{birth}, </if><if test=\"createTime != null\">#{createTime}, </if><if test=\"updateTime != null\">#{updateTime}, </if></trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \"><if test=\"name != null\">`name` = #{name}, </if><if test=\"address != null\">`address` = #{address}, </if><if test=\"birth != null\">`birth` = #{birth}, </if><if test=\"createTime != null\">`create_time` = #{createTime}, </if><if test=\"updateTime != null\">`update_time` = #{updateTime}, </if></trim></script>";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
     void buildDeleteByPrimaryKey() throws Exception {
         String actual = CrudSqlBuilder.buildDeleteByPrimaryKey(getContext(UserMapper.class.getMethod("deleteByPrimaryKey", Object.class))).trim();
         String expected = "DELETE FROM `user` WHERE `id` = #{id}";

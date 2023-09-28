@@ -123,6 +123,72 @@ public class CrudSqlBuilder {
         });
     }
 
+    public static String buildUpsert(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> {
+            StringBuilder sqlBuffer = new StringBuilder();
+            sqlBuffer.append("<script>");
+            sqlBuffer.append("INSERT INTO ");
+            sqlBuffer.append(SqlBuilderHelper.buildTableName(tableInfo));
+            sqlBuffer.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">");
+            for (String column : tableInfo.getColumns().keySet()) {
+                sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(column).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(", ");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("<trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">");
+            for (String field : tableInfo.getColumns().values()) {
+                sqlBuffer.append("#{").append(field).append("}, ");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append(" ON DUPLICATE KEY UPDATE ");
+            sqlBuffer.append("<trim suffixOverrides=\", \">");
+            for (Map.Entry<String, String> entry : tableInfo.getColumns().entrySet()) {
+                if (entry.getKey().equals(tableInfo.getId())) {
+                    continue;
+                }
+                sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(entry.getKey()).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(" = #{").append(entry.getValue()).append("}, ");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("</script>");
+            return sqlBuffer.toString();
+        });
+    }
+
+    public static String buildUpsertSelective(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> {
+            StringBuilder sqlBuffer = new StringBuilder();
+            sqlBuffer.append("<script>");
+            sqlBuffer.append("INSERT INTO ");
+            sqlBuffer.append(SqlBuilderHelper.buildTableName(tableInfo));
+            sqlBuffer.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">");
+            for (Map.Entry<String, String> entry : tableInfo.getColumns().entrySet()) {
+                sqlBuffer.append("<if test=\"").append(entry.getValue()).append(" != null\">");
+                sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(entry.getKey()).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(", ");
+                sqlBuffer.append("</if>");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("<trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">");
+            for (String field : tableInfo.getColumns().values()) {
+                sqlBuffer.append("<if test=\"").append(field).append(" != null\">");
+                sqlBuffer.append("#{").append(field).append("}, ");
+                sqlBuffer.append("</if>");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append(" ON DUPLICATE KEY UPDATE ");
+            sqlBuffer.append("<trim suffixOverrides=\", \">");
+            for (Map.Entry<String, String> entry : tableInfo.getColumns().entrySet()) {
+                if (entry.getKey().equals(tableInfo.getId())) {
+                    continue;
+                }
+                sqlBuffer.append("<if test=\"").append(entry.getValue()).append(" != null\">");
+                sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(entry.getKey()).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(" = #{").append(entry.getValue()).append("}, ");
+                sqlBuffer.append("</if>");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("</script>");
+            return sqlBuffer.toString();
+        });
+    }
+
     public static String buildDeleteByPrimaryKey(ProviderContext context) {
         return SqlBuilderHelper.buildSql(context, tableInfo -> "DELETE FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + SqlConstant.IDENTIFIER_ESCAPE_CHAR + tableInfo.getId() + SqlConstant.IDENTIFIER_ESCAPE_CHAR + " = " + "#{" + tableInfo.getColumns().get(tableInfo.getId()) + "}");
     }

@@ -23,6 +23,14 @@ public interface CrudBaseMapper<T, ID> {
     @UpdateProvider(type = CrudSqlBuilder.class, method = "buildUpdateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(T entity);
 
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @InsertProvider(type = CrudSqlBuilder.class, method = "buildUpsert")
+    int upsert(T entity);
+
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @InsertProvider(type = CrudSqlBuilder.class, method = "buildUpsertSelective")
+    int upsertSelective(T entity);
+
     @DeleteProvider(type = CrudSqlBuilder.class, method = "buildDeleteByPrimaryKey")
     int deleteByPrimaryKey(ID id);
 
