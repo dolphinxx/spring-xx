@@ -30,6 +30,19 @@ class CriteriaBaseMapperTest extends MapperTests {
     }
 
     @Test
+    void existsByCriteria() {
+        jdbcTemplate.update("INSERT INTO `user`(name)VALUES(?)", "Foo");
+        jdbcTemplate.update("INSERT INTO `user`(name)VALUES(?)", "Fish");
+        jdbcTemplate.update("INSERT INTO `user`(name)VALUES(?)", "BF");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            boolean actual = sqlSession.getMapper(UserMapper.class).existsByCriteria(Criterion.query(User.class).startsWith("name", "F"));
+            assertThat(actual).isTrue();
+            actual = sqlSession.getMapper(UserMapper.class).existsByCriteria(Criterion.query(User.class).startsWith("name", "FF"));
+            assertThat(actual).isFalse();
+        }
+    }
+
+    @Test
     void selectByCriteria() {
         jdbcTemplate.update("INSERT INTO `user`(name)VALUES(?)", "Far");
         jdbcTemplate.update("INSERT INTO `user`(name)VALUES(?)", "Foo");

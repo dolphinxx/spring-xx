@@ -14,6 +14,10 @@ public class CriteriaSqlBuilder {
                 criteria.buildSql();
     }
 
+    public static String buildExistsByCriteria(ProviderContext context, Map<String, Object> params) {
+        return buildCountByCriteria(context, params) + " LIMIT 1";
+    }
+
     public static String buildSelectByCriteria(ProviderContext context, Map<String, Object> params) {
         EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(context);
         QueryCriteria<?> criteria = (QueryCriteria<?>) params.get("criteria");

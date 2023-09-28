@@ -12,6 +12,9 @@ public interface CriteriaBaseMapper<T> {
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildCountByCriteria")
     int countByCriteria(@Param("criteria") Criteria<T> criteria);
 
+    @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildExistsByCriteria")
+    boolean existsByCriteria(@Param("criteria") Criteria<T> criteria);
+
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildSelectByCriteria")
     List<T> selectByCriteria(@Param("criteria") Criteria<T> criteria);
 

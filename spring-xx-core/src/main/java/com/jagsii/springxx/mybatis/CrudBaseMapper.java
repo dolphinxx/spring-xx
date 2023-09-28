@@ -22,4 +22,7 @@ public interface CrudBaseMapper<T, ID> {
 
     @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectByPrimaryKey")
     T selectByPrimaryKey(ID id);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildExistsByPrimaryKey")
+    boolean existsByPrimaryKey(ID id);
 }

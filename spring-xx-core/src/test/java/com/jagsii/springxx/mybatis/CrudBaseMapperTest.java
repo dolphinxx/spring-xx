@@ -3,13 +3,9 @@ package com.jagsii.springxx.mybatis;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,14 +80,7 @@ class CrudBaseMapperTest extends MapperTests {
 
     @Test
     void updateByPrimaryKeySelective() {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(conn -> {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO `user`(`name`, `birth`)VALUES(?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, "Foo");
-            stmt.setObject(2, LocalDate.parse("2000-01-01"));
-            return stmt;
-        }, keyHolder);
-        long id = ((Number) Objects.requireNonNull(keyHolder.getKeys()).get("id")).longValue();
+        long id = insertForGeneratedId("INSERT INTO `user`(`name`, `birth`)VALUES(?, ?)", "Foo", LocalDate.parse("2000-01-01"));
         User entity = new User();
         entity.setId(id);
         entity.setAddress("abc");
@@ -122,16 +111,21 @@ class CrudBaseMapperTest extends MapperTests {
 
     @Test
     void selectByPrimaryKey() {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(conn -> {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO `user`(`name`)VALUES(?)", PreparedStatement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, "Foo");
-            return stmt;
-        }, keyHolder);
-        long id = ((Number) Objects.requireNonNull(keyHolder.getKeys()).get("id")).longValue();
+        long id = insertForGeneratedId("INSERT INTO `user`(`name`)VALUES(?)", "Foo");
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             User actual = sqlSession.getMapper(UserMapper.class).selectByPrimaryKey(id);
             assertThat(actual).hasFieldOrPropertyWithValue("name", "Foo");
+        }
+    }
+
+    @Test
+    void existsByPrimaryKey() {
+        long id = insertForGeneratedId("INSERT INTO `user`(`name`)VALUES(?)", "Foo");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            boolean actual = sqlSession.getMapper(UserMapper.class).existsByPrimaryKey(id);
+            assertThat(actual).isTrue();
+            actual = sqlSession.getMapper(UserMapper.class).existsByPrimaryKey(0L);
+            assertThat(actual).isFalse();
         }
     }
 }

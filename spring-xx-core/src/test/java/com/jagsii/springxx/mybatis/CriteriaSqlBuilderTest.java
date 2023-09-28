@@ -21,6 +21,14 @@ class CriteriaSqlBuilderTest extends SqlBuilderTests {
     }
 
     @Test
+    void buildExistsByCriteria() throws Exception {
+        QueryCriteria<User> criteria = Criterion.query(User.class).eq("id", 1L);
+        String actual = CriteriaSqlBuilder.buildExistsByCriteria(getContext(UserMapper.class.getMethod("existsByCriteria", Criteria.class)), Collections.singletonMap("criteria", criteria));
+        String expected = "SELECT COUNT(0) FROM `user` WHERE `id` = #{criteria.params.param1} LIMIT 1";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
     void buildSelectByCriteria() throws Exception {
         QueryCriteria<User> criteria = Criterion.query(User.class).eq("id", 1L).orderBy("create_time", OrderDirection.DESC).orderBy("update_time", OrderDirection.ASC).limit(10, 20);
         String actual = CriteriaSqlBuilder.buildSelectByCriteria(getContext(UserMapper.class.getMethod("selectByCriteria", Criteria.class)), Collections.singletonMap("criteria", criteria));

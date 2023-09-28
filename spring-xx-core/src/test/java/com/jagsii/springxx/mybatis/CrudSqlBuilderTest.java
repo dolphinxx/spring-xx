@@ -1,11 +1,6 @@
 package com.jagsii.springxx.mybatis;
 
-import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,6 +50,14 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
         String actual = CrudSqlBuilder.buildSelectByPrimaryKey(getContext(UserMapper.class.getMethod("selectByPrimaryKey", Object.class))).trim();
         System.out.println(actual);
         String expected = "SELECT * FROM `user` WHERE `id` = #{id}";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void buildExistsByPrimaryKey() throws Exception {
+        String actual = CrudSqlBuilder.buildExistsByPrimaryKey(getContext(UserMapper.class.getMethod("existsByPrimaryKey", Object.class))).trim();
+        System.out.println(actual);
+        String expected = "SELECT COUNT(0) FROM `user` WHERE `id` = #{id} LIMIT 1";
         assertThat(actual).isEqualTo(expected);
     }
 }

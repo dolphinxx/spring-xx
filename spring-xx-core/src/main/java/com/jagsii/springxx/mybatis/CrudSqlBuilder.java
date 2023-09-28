@@ -107,4 +107,8 @@ public class CrudSqlBuilder {
     public static String buildSelectByPrimaryKey(ProviderContext context) {
         return SqlBuilderHelper.buildSql(context, tableInfo -> "SELECT * FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + SqlConstant.IDENTIFIER_ESCAPE_CHAR + tableInfo.getId() + SqlConstant.IDENTIFIER_ESCAPE_CHAR + " = #{" + tableInfo.getColumns().get(tableInfo.getId()) + "}");
     }
+
+    public static String buildExistsByPrimaryKey(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> "SELECT COUNT(0) FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + SqlConstant.IDENTIFIER_ESCAPE_CHAR + tableInfo.getId() + SqlConstant.IDENTIFIER_ESCAPE_CHAR + " = #{" + tableInfo.getColumns().get(tableInfo.getId()) + "} LIMIT 1");
+    }
 }
