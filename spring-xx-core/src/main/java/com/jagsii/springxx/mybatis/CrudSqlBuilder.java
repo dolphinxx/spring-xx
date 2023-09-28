@@ -28,6 +28,30 @@ public class CrudSqlBuilder {
         });
     }
 
+    public static String buildInsertBatch(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> {
+            StringBuilder sqlBuffer = new StringBuilder();
+            sqlBuffer.append("<script>");
+            sqlBuffer.append("INSERT INTO ");
+            sqlBuffer.append(SqlBuilderHelper.buildTableName(tableInfo));
+            sqlBuffer.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">");
+            for (String column : tableInfo.getColumns().keySet()) {
+                sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(column).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(", ");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("VALUES ");
+            sqlBuffer.append("<foreach collection=\"list\" item=\"e\" open=\"(\" separator=\"), (\"  close=\")\">");
+            sqlBuffer.append("<trim suffixOverrides=\", \">");
+            for (String field : tableInfo.getColumns().values()) {
+                sqlBuffer.append("#{e.").append(field).append("}, ");
+            }
+            sqlBuffer.append("</trim>");
+            sqlBuffer.append("</foreach>");
+            sqlBuffer.append("</script>");
+            return sqlBuffer.toString();
+        });
+    }
+
     public static String buildInsertSelective(ProviderContext context) {
         return SqlBuilderHelper.buildSql(context, tableInfo -> {
             StringBuilder sqlBuffer = new StringBuilder();
@@ -51,7 +75,6 @@ public class CrudSqlBuilder {
             sqlBuffer.append("</script>");
             return sqlBuffer.toString();
         });
-
     }
 
     public static String buildUpdateByPrimaryKey(ProviderContext context) {
@@ -102,6 +125,18 @@ public class CrudSqlBuilder {
 
     public static String buildDeleteByPrimaryKey(ProviderContext context) {
         return SqlBuilderHelper.buildSql(context, tableInfo -> "DELETE FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + SqlConstant.IDENTIFIER_ESCAPE_CHAR + tableInfo.getId() + SqlConstant.IDENTIFIER_ESCAPE_CHAR + " = " + "#{" + tableInfo.getColumns().get(tableInfo.getId()) + "}");
+    }
+
+    public static String buildDeleteByPrimaryKeys(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> {
+            StringBuilder sqlBuffer = new StringBuilder();
+            sqlBuffer.append("<script>");
+            sqlBuffer.append("DELETE FROM ").append(SqlBuilderHelper.buildTableName(tableInfo)).append(" WHERE ");
+            sqlBuffer.append(SqlConstant.IDENTIFIER_ESCAPE_CHAR).append(tableInfo.getId()).append(SqlConstant.IDENTIFIER_ESCAPE_CHAR);
+            sqlBuffer.append(" IN <foreach collection=\"list\" item=\"e\" open=\"(\" separator=\", \"  close=\")\">#{e}</foreach>");
+            sqlBuffer.append("</script>");
+            return sqlBuffer.toString();
+        });
     }
 
     public static String buildSelectByPrimaryKey(ProviderContext context) {

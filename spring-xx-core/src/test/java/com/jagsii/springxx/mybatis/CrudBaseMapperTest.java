@@ -1,11 +1,14 @@
 package com.jagsii.springxx.mybatis;
 
 import org.apache.ibatis.session.SqlSession;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,6 +36,40 @@ class CrudBaseMapperTest extends MapperTests {
         User actual = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?", new BeanPropertyRowMapper<>(User.class), entity.getId());
         assertThat(actual).hasFieldOrPropertyWithValue("name", "Foo")
                 .hasFieldOrPropertyWithValue("address", "abc")
+                .hasFieldOrPropertyWithValue("birth", null)
+                .hasFieldOrPropertyWithValue("createTime", now)
+                .hasFieldOrPropertyWithValue("updateTime", now);
+    }
+
+    @Test
+    void insertBatch() {
+        List<User> entities = new ArrayList<>();
+        User entity = new User();
+        entity.setName("Foo1");
+        entity.setAddress("abc1");
+        LocalDateTime now = LocalDateTime.now();
+        entity.setCreateTime(now);
+        entity.setUpdateTime(now);
+        entities.add(entity);
+        entity = new User();
+        entity.setName("Foo2");
+        entity.setAddress("abc2");
+        entity.setCreateTime(now);
+        entity.setUpdateTime(now);
+        entities.add(entity);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.getMapper(UserMapper.class).insertBatch(entities);
+        }
+        assertThat(entity.getId()).isNotNull();
+        List<User> actual = jdbcTemplate.query("SELECT * FROM `user` ORDER BY `name`", new BeanPropertyRowMapper<>(User.class));
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0)).hasFieldOrPropertyWithValue("name", "Foo1")
+                .hasFieldOrPropertyWithValue("address", "abc1")
+                .hasFieldOrPropertyWithValue("birth", null)
+                .hasFieldOrPropertyWithValue("createTime", now)
+                .hasFieldOrPropertyWithValue("updateTime", now);
+        assertThat(actual.get(1)).hasFieldOrPropertyWithValue("name", "Foo2")
+                .hasFieldOrPropertyWithValue("address", "abc2")
                 .hasFieldOrPropertyWithValue("birth", null)
                 .hasFieldOrPropertyWithValue("createTime", now)
                 .hasFieldOrPropertyWithValue("updateTime", now);
@@ -106,6 +143,19 @@ class CrudBaseMapperTest extends MapperTests {
             sqlSession.getMapper(UserMapper.class).deleteByPrimaryKey(id);
         }
         actual = jdbcTemplate.queryForObject("SELECT COUNT(0) FROM `user` WHERE id = ?", Integer.class, id);
+        assertThat(actual).isEqualTo(0);
+    }
+
+    @Test
+    void deleteByPrimaryKeys() {
+        Long id1 = insertForGeneratedId("INSERT INTO `user`(`name`)VALUES(?)", "Foo");
+        Long id2 = insertForGeneratedId("INSERT INTO `user`(`name`)VALUES(?)", "Fish");
+        Integer actual = jdbcTemplate.queryForObject("SELECT COUNT(0) FROM `user`", Integer.class);
+        assertThat(actual).isEqualTo(2);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.getMapper(UserMapper.class).deleteByPrimaryKeys(Lists.list(id1, id2));
+        }
+        actual = jdbcTemplate.queryForObject("SELECT COUNT(0) FROM `user`", Integer.class);
         assertThat(actual).isEqualTo(0);
     }
 

@@ -2,6 +2,8 @@ package com.jagsii.springxx.mybatis;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CrudSqlBuilderTest extends SqlBuilderTests {
@@ -13,6 +15,13 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
     void buildInsert() throws Exception {
         String actual = CrudSqlBuilder.buildInsert(getContext(UserMapper.class.getMethod("insert", Object.class))).trim();
         String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{id}, #{name}, #{address}, #{birth}, #{createTime}, #{updateTime}, </trim></script>";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void buildInsertBatch() throws Exception {
+        String actual = CrudSqlBuilder.buildInsertBatch(getContext(UserMapper.class.getMethod("insertBatch", List.class))).trim();
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim>VALUES <foreach collection=\"list\" item=\"e\" open=\"(\" separator=\"), (\"  close=\")\"><trim suffixOverrides=\", \">#{e.id}, #{e.name}, #{e.address}, #{e.birth}, #{e.createTime}, #{e.updateTime}, </trim></foreach></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -42,6 +51,13 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
     void buildDeleteByPrimaryKey() throws Exception {
         String actual = CrudSqlBuilder.buildDeleteByPrimaryKey(getContext(UserMapper.class.getMethod("deleteByPrimaryKey", Object.class))).trim();
         String expected = "DELETE FROM `user` WHERE `id` = #{id}";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void buildDeleteByPrimaryKeys() throws Exception {
+        String actual = CrudSqlBuilder.buildDeleteByPrimaryKeys(getContext(UserMapper.class.getMethod("deleteByPrimaryKeys", List.class))).trim();
+        String expected = "<script>DELETE FROM `user` WHERE `id` IN <foreach collection=\"list\" item=\"e\" open=\"(\" separator=\", \"  close=\")\">#{e}</foreach></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
