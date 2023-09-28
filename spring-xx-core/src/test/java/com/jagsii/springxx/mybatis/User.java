@@ -1,10 +1,10 @@
 package com.jagsii.springxx.mybatis;
 
 
+import com.jagsii.springxx.mybatis.annotations.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

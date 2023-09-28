@@ -1,14 +1,16 @@
 package com.jagsii.springxx.mybatis;
 
 import com.jagsii.springxx.common.utils.CaseUtils;
+import com.jagsii.springxx.mybatis.annotations.Column;
+import com.jagsii.springxx.mybatis.annotations.Id;
 import com.jagsii.springxx.mybatis.annotations.Ignore;
+import com.jagsii.springxx.mybatis.annotations.Table;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
