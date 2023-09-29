@@ -78,6 +78,9 @@ public class SqlBuilderHelper {
             throw new RuntimeException("There is no field in the class [" + entityClass.getCanonicalName()
                     + "] that specifies the @BaseMapper.Column annotation.");
         }
+        if(info.getId() == null) {
+            info.setId("id");
+        }
         info.setColumns(columnMap);
         return info;
     }
