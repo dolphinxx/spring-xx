@@ -1,4 +1,4 @@
-package com.jagsii.springxx;
+package com.jagsii.springxx.test;
 
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,10 +11,12 @@ configurations {
 
 dependencies {
     implementation deps['mybatis-spring-boot-starter']
+    implementation "org.springframework:spring-web"
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.data:spring-data-commons'
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
+    testImplementation project(":spring-xx-tests")
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'com.h2database:h2'

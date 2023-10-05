@@ -1,7 +1,12 @@
 package com.jagsii.springxx.mybatis;
 
+import com.jagsii.springxx.common.pagination.PageRequest;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.springframework.beans.BeanUtils;
+import org.springframework.lang.Nullable;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -211,5 +216,88 @@ public class CrudSqlBuilder {
 
     public static String buildExistsByPrimaryKey(ProviderContext context) {
         return SqlBuilderHelper.buildSql(context, tableInfo -> "SELECT COUNT(0) FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + SqlConstant.IDENTIFIER_ESCAPE_CHAR + tableInfo.getId() + SqlConstant.IDENTIFIER_ESCAPE_CHAR + " = #{" + tableInfo.getColumns().get(tableInfo.getId()) + "} LIMIT 1");
+    }
+
+    public static String buildSelectOneByExample(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> _buildSelectByExample(SqlBuilderHelper.getEntityClass(context), tableInfo, false, true, null));
+    }
+
+    public static String buildSelectByExample(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> _buildSelectByExample(SqlBuilderHelper.getEntityClass(context), tableInfo, false, false, null));
+    }
+
+    public static String buildSelectByExampleWithPage(ProviderContext context, Map<String, Object> params) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> _buildSelectByExample(SqlBuilderHelper.getEntityClass(context), tableInfo, false, false, (PageRequest) params.get("page")));
+    }
+
+    public static String buildCountByExample(ProviderContext context) {
+        return SqlBuilderHelper.buildSql(context, tableInfo -> _buildSelectByExample(SqlBuilderHelper.getEntityClass(context), tableInfo, true, false, null));
+    }
+
+    private static String _buildSelectByExample(Class<?> entityClass, EntityTableInfo tableInfo, boolean isCount, boolean hasLimit, @Nullable PageRequest page) {
+        StringBuilder sqlBuffer = new StringBuilder();
+        sqlBuffer.append("<script>");
+        sqlBuffer.append("SELECT ");
+        sqlBuffer.append(isCount ? "COUNT(0)" : "*");
+        sqlBuffer.append(" FROM ").append(SqlBuilderHelper.buildTableName(tableInfo));
+        sqlBuffer.append("<where>");
+        for (PropertyDescriptor prop : BeanUtils.getPropertyDescriptors(entityClass)) {
+            Method getter = prop.getReadMethod();
+            if (getter == null) {
+                continue;
+            }
+            String fieldName = prop.getName();
+            String columnName = tableInfo.getColumnByField(fieldName);
+            if (columnName == null) {
+                continue;
+            }
+            sqlBuffer.append("<if test=\"example.").append(fieldName).append(" != null\">AND ").append(columnName).append(" = #{example.").append(fieldName).append("}").append("</if>");
+        }
+        sqlBuffer.append("</where>");
+        if (hasLimit) {
+            sqlBuffer.append(" LIMIT 1");
+        }
+        if(page != null) {
+            sqlBuffer.append(" LIMIT ").append(page.getOffset()).append(",").append(page.getSize());
+        }
+        sqlBuffer.append("</script>");
+        return sqlBuffer.toString();
+    }
+
+    public static String buildSelectOneByMap(ProviderContext context, Map<String, Object> params) {
+        return _buildSelectByMap(context, params, false, true);
+    }
+
+    public static String buildSelectByMap(ProviderContext context, Map<String, Object> params) {
+        return _buildSelectByMap(context, params, false, false);
+    }
+
+    public static String buildCountByMap(ProviderContext context, Map<String, Object> params) {
+        return _buildSelectByMap(context, params, true, false);
+    }
+
+    private static String _buildSelectByMap(ProviderContext context, Map<String, Object> params, boolean isCount, boolean hasLimit) {
+        @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) params.get("map");
+        Class<?> entityClass = SqlBuilderHelper.getEntityClass(context);
+        EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(entityClass);
+        StringBuilder sqlBuffer = new StringBuilder();
+        sqlBuffer.append("<script>");
+        sqlBuffer.append("SELECT ");
+        sqlBuffer.append(isCount ? "COUNT(0)" : "*");
+        sqlBuffer.append(" FROM ").append(SqlBuilderHelper.buildTableName(tableInfo));
+        sqlBuffer.append("<where>");
+        for (String fieldName : map.keySet()) {
+            String columnName = tableInfo.getColumnByField(fieldName);
+            if (columnName == null) {
+                continue;
+            }
+            sqlBuffer.append("<if test=\"map.").append(fieldName).append(" != null\">AND ").append(columnName).append(" = #{map.").append(fieldName).append("}").append("</if>");
+        }
+        sqlBuffer.append("</where>");
+        if (hasLimit) {
+            sqlBuffer.append(" LIMIT 1");
+        }
+        sqlBuffer.append("</script>");
+        return sqlBuffer.toString();
     }
 }

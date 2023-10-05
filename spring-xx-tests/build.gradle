@@ -1,0 +1,22 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation project(":spring-xx-core")
+    implementation deps['mybatis-spring-boot-starter']
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.assertj:assertj-core'
+    implementation 'com.h2database:h2'
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+}

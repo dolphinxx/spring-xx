@@ -1,8 +1,10 @@
 package com.jagsii.springxx.mybatis;
 
+import com.jagsii.springxx.common.pagination.PageRequest;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CrudBaseMapper<T, ID> {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
@@ -42,4 +44,25 @@ public interface CrudBaseMapper<T, ID> {
 
     @SelectProvider(type = CrudSqlBuilder.class, method = "buildExistsByPrimaryKey")
     boolean existsByPrimaryKey(ID id);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectOneByExample")
+    T selectOneByExample(@Param("example") T example);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectOneByMap")
+    T selectOneByMap(@Param("map") Map<String, Object> map);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectByExample")
+    List<T> selectByExample(@Param("example") T example);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectByExampleWithPage")
+    List<T> selectByExampleWithPage(@Param("example") T example, @Param("page") PageRequest page);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildSelectByMap")
+    List<T> selectByMap(@Param("map") Map<String, Object> map);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildCountByExample")
+    int countByExample(@Param("example") T example);
+
+    @SelectProvider(type = CrudSqlBuilder.class, method = "buildCountByMap")
+    int countByMap(@Param("map") Map<String, Object> map);
 }

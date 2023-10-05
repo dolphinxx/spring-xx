@@ -1,9 +1,8 @@
-package com.jagsii.springxx.mybatis;
+package com.jagsii.springxx.test;
 
-import com.jagsii.springxx.SpringTests;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -19,27 +18,17 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Rollback
 @Transactional
 @AutoConfigureTestDatabase
 @ImportAutoConfiguration({JdbcTemplateAutoConfiguration.class, MybatisAutoConfiguration.class, SqlInitializationAutoConfiguration.class, TransactionAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
-public abstract class MapperTests extends SpringTests {
+public abstract class MybatisMapperTests extends SpringTests {
     @Autowired
     protected SqlSessionFactory sqlSessionFactory;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    void beforeEach() {
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        Class<?> mapperClass = getMapperClass();
-        if (!configuration.hasMapper(mapperClass)) {
-            sqlSessionFactory.getConfiguration().addMapper(mapperClass);
-        }
-    }
-
-    protected abstract Class<?> getMapperClass();
 
     protected Long insertForGeneratedId(String sql, Object... params) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -51,5 +40,15 @@ public abstract class MapperTests extends SpringTests {
         PreparedStatementCreator psc = pscf.newPreparedStatementCreator(params);
         jdbcTemplate.update(psc, keyHolder);
         return ((Number) Objects.requireNonNull(keyHolder.getKeys()).get("id")).longValue();
+    }
+
+    protected <T> void testMapper(Consumer<T> fn, Class<T> mapperClass) {
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+        if (!configuration.hasMapper(mapperClass)) {
+            sqlSessionFactory.getConfiguration().addMapper(mapperClass);
+        }
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            fn.accept(sqlSession.getMapper(mapperClass));
+        }
     }
 }
