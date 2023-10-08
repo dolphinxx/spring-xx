@@ -44,5 +44,5 @@ public abstract class SpringTests {
 
     }
 
-    protected ResultMatcher isOk = result -> jsonPath("$.status", Matchers.equalTo(200));
+    protected ResultMatcher isOk = result -> jsonPath("$.status", Matchers.equalTo(200)).match(result);
 }
