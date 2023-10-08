@@ -10,16 +10,20 @@ configurations {
 }
 
 dependencies {
-    implementation deps['mybatis-spring-boot-starter']
-    implementation "org.springframework:spring-web"
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.data:spring-data-commons'
+    api deps["mybatis-spring-boot-starter"]
+    api "org.springframework:spring-web"
+    api "org.springframework.boot:spring-boot-starter"
+    api "org.springframework.data:spring-data-commons"
+    api "javax.validation:validation-api"
+    api "jakarta.validation:jakarta.validation-api"
+    api "org.hibernate.validator:hibernate-validator"
+    api "org.apache.commons:commons-lang3"
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     testImplementation project(":spring-xx-tests")
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.assertj:assertj-core'
-    testImplementation 'com.h2database:h2'
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "com.h2database:h2"
     testCompileOnly "org.projectlombok:lombok"
     testAnnotationProcessor "org.projectlombok:lombok"
 }
