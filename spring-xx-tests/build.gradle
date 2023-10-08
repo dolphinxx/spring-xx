@@ -10,13 +10,16 @@ configurations {
 }
 
 dependencies {
-    implementation project(":spring-xx-core")
-    implementation deps['mybatis-spring-boot-starter']
+    api(project(":spring-xx-core"))
+    api(deps['mybatis-spring-boot-starter'])
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.assertj:assertj-core'
-    implementation 'com.h2database:h2'
-    implementation "com.fasterxml.jackson.core:jackson-databind"
+    api("org.springframework.boot:spring-boot-starter")
+    api("org.springframework.boot:spring-boot-starter-test")
+    api("org.assertj:assertj-core")
+//    api("org.hsqldb:hsqldb:2.7.2")
+    api("com.h2database:h2:2.2.224")
+    api("com.fasterxml.jackson.core:jackson-databind")
+    api("org.instancio:instancio-core:3.3.0")
+    api("org.instancio:instancio-junit:3.3.0")
 }
