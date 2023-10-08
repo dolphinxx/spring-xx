@@ -6,8 +6,11 @@ import com.jagsii.springxx.mybatis.annotations.Id;
 import com.jagsii.springxx.mybatis.annotations.Ignore;
 import com.jagsii.springxx.mybatis.annotations.Table;
 import org.apache.ibatis.builder.annotation.ProviderContext;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -63,9 +66,15 @@ public class SqlBuilderHelper {
             info.setTableName(CaseUtils.pascalToSnake(entityClass.getSimpleName()));
         }
 
-        Field[] fields = entityClass.getDeclaredFields();
         Map<String, String> columnMap = new LinkedHashMap<>();
-        for (Field field : fields) {
+        for (PropertyDescriptor prop : BeanUtils.getPropertyDescriptors(entityClass)) {
+            if (prop.getReadMethod() == null || prop.getWriteMethod() == null) {
+                continue;
+            }
+            Field field = ReflectionUtils.findField(entityClass, prop.getName());
+            if (field == null) {
+                continue;
+            }
             String columnName = getColumnName(field);
             if (StringUtils.hasText(columnName)) {
                 columnMap.put(columnName, field.getName());
@@ -78,7 +87,7 @@ public class SqlBuilderHelper {
             throw new RuntimeException("There is no field in the class [" + entityClass.getCanonicalName()
                     + "] that specifies the @BaseMapper.Column annotation.");
         }
-        if(info.getId() == null) {
+        if (info.getId() == null) {
             info.setId("id");
         }
         info.setColumns(columnMap);

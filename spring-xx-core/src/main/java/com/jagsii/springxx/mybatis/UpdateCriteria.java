@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class UpdateCriteria<T> extends AbstractCriteria<T, String, UpdateCriteria<T>> implements Update<String, UpdateCriteria<T>> {
+public class UpdateCriteria<T> extends AbstractCriteria<T, String, UpdateCriteria<T>> implements UpdatableCriteria<String, UpdateCriteria<T>> {
     List<String> sets = new ArrayList<>();
 
     protected UpdateCriteria(Class<T> entityClass) {

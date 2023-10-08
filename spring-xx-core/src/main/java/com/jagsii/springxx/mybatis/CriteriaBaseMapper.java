@@ -10,20 +10,20 @@ import java.util.List;
 
 public interface CriteriaBaseMapper<T> {
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildCountByCriteria")
-    int countByCriteria(@Param("criteria") Criteria<T> criteria);
+    int countByCriteria(@Param("criteria") Criteria criteria);
 
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildExistsByCriteria")
-    boolean existsByCriteria(@Param("criteria") Criteria<T> criteria);
+    boolean existsByCriteria(@Param("criteria") Criteria criteria);
 
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildSelectByCriteria")
-    List<T> selectByCriteria(@Param("criteria") Criteria<T> criteria);
+    List<T> selectByCriteria(@Param("criteria") Criteria criteria);
 
     @SelectProvider(type = CriteriaSqlBuilder.class, method = "buildSelectByCriteria")
-    List<T> selectByCriteriaWithRowBounds(@Param("criteria") Criteria<T> criteria, RowBounds rowBounds);
+    List<T> selectByCriteriaWithRowBounds(@Param("criteria") Criteria criteria, RowBounds rowBounds);
 
     @UpdateProvider(type = CriteriaSqlBuilder.class, method = "buildUpdateByCriteria")
-    int updateByCriteria(@Param("criteria") Criteria<T> criteria);
+    int updateByCriteria(@Param("criteria") Criteria criteria);
 
     @DeleteProvider(type = CriteriaSqlBuilder.class, method = "buildDeleteByCriteria")
-    int deleteByCriteria(@Param("criteria") Criteria<T> criteria);
+    int deleteByCriteria(@Param("criteria") Criteria criteria);
 }

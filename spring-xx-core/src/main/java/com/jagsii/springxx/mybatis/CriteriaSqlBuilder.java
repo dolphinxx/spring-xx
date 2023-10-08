@@ -29,7 +29,7 @@ public class CriteriaSqlBuilder {
 
     public static String buildUpdateByCriteria(ProviderContext context, Map<String, Object> params) {
         EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(context);
-        UpdateCriteria<?> criteria = (UpdateCriteria<?>) params.get("criteria");
+        UpdatableCriteria<?, ?> criteria = (UpdatableCriteria<?, ?>) params.get("criteria");
         return "UPDATE " + SqlBuilderHelper.buildTableName(tableInfo) + " SET " + criteria.buildSetsSql() + " WHERE " + criteria.buildSql();
     }
 

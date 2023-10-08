@@ -1,15 +1,13 @@
 package com.jagsii.springxx.mybatis;
 
 import com.jagsii.springxx.common.SerializableFunction;
-import com.jagsii.springxx.common.utils.NameUtils;
-import com.jagsii.springxx.common.utils.Reflects;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LambdaUpdateCriteria<T> extends AbstractCriteria<T, SerializableFunction<T, ?>, LambdaUpdateCriteria<T>> implements Update<SerializableFunction<T, ?>, LambdaUpdateCriteria<T>> {
+public class LambdaUpdateCriteria<T> extends AbstractCriteria<T, SerializableFunction<T, ?>, LambdaUpdateCriteria<T>> implements UpdatableCriteria<SerializableFunction<T, ?>, LambdaUpdateCriteria<T>> {
     List<String> sets = new ArrayList<>();
 
     protected LambdaUpdateCriteria(Class<T> entityClass) {

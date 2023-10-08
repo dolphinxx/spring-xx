@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static com.jagsii.springxx.mybatis.SqlConstant.IDENTIFIER_ESCAPE_CHAR;
 
-public abstract class AbstractCriteria<T, C, I extends AbstractCriteria<T, C, I>> implements Criteria<T> {
+public abstract class AbstractCriteria<T, C, I extends AbstractCriteria<T, C, I>> implements Criteria {
     protected final Class<T> entityClass;
     @Getter
     protected final Map<String, Object> params;
@@ -64,9 +64,13 @@ public abstract class AbstractCriteria<T, C, I extends AbstractCriteria<T, C, I>
     protected abstract I instantiate(Class<T> entityClass, Map<String, Object> params, AtomicInteger paramNameSeq);
 
     protected String wrapParam(Object value) {
+        return wrapParam(value, false);
+    }
+
+    protected String wrapParam(Object value, boolean isRaw) {
         String paramName = "param" + paramNameSeq.incrementAndGet();
         this.params.put(paramName, value);
-        return "#{criteria.params." + paramName + "}";
+        return (isRaw ? "$" : "#") + "{criteria.params." + paramName + "}";
     }
 
     protected I addCondition(C column, SqlOperator operator, Object value) {

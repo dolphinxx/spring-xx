@@ -18,21 +18,21 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
     @Test
     void buildInsert() throws Exception {
         String actual = CrudSqlBuilder.buildInsert(getContext(UserMapper.class.getMethod("insert", Object.class))).trim();
-        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{id}, #{name}, #{address}, #{birth}, #{createTime}, #{updateTime}, </trim></script>";
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`address`, `birth`, `create_time`, `id`, `name`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{address}, #{birth}, #{createTime}, #{id}, #{name}, #{updateTime}, </trim></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void buildInsertBatch() throws Exception {
         String actual = CrudSqlBuilder.buildInsertBatch(getContext(UserMapper.class.getMethod("insertBatch", List.class))).trim();
-        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim>VALUES <foreach collection=\"list\" item=\"e\" open=\"(\" separator=\"), (\"  close=\")\"><trim suffixOverrides=\", \">#{e.id}, #{e.name}, #{e.address}, #{e.birth}, #{e.createTime}, #{e.updateTime}, </trim></foreach></script>";
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`address`, `birth`, `create_time`, `id`, `name`, `update_time`, </trim>VALUES <foreach collection=\"list\" item=\"e\" open=\"(\" separator=\"), (\"  close=\")\"><trim suffixOverrides=\", \">#{e.address}, #{e.birth}, #{e.createTime}, #{e.id}, #{e.name}, #{e.updateTime}, </trim></foreach></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void buildInsertSelective() throws Exception {
         String actual = CrudSqlBuilder.buildInsertSelective(getContext(UserMapper.class.getMethod("insertSelective", Object.class))).trim();
-        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">`id`, </if><if test=\"name != null\">`name`, </if><if test=\"address != null\">`address`, </if><if test=\"birth != null\">`birth`, </if><if test=\"createTime != null\">`create_time`, </if><if test=\"updateTime != null\">`update_time`, </if></trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">#{id}, </if><if test=\"name != null\">#{name}, </if><if test=\"address != null\">#{address}, </if><if test=\"birth != null\">#{birth}, </if><if test=\"createTime != null\">#{createTime}, </if><if test=\"updateTime != null\">#{updateTime}, </if></trim></script>";
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \"><if test=\"address != null\">`address`, </if><if test=\"birth != null\">`birth`, </if><if test=\"createTime != null\">`create_time`, </if><if test=\"id != null\">`id`, </if><if test=\"name != null\">`name`, </if><if test=\"updateTime != null\">`update_time`, </if></trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \"><if test=\"address != null\">#{address}, </if><if test=\"birth != null\">#{birth}, </if><if test=\"createTime != null\">#{createTime}, </if><if test=\"id != null\">#{id}, </if><if test=\"name != null\">#{name}, </if><if test=\"updateTime != null\">#{updateTime}, </if></trim></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -40,28 +40,28 @@ class CrudSqlBuilderTest extends SqlBuilderTests {
     void buildUpdateByPrimaryKey() throws Exception {
         String actual = CrudSqlBuilder.buildUpdateByPrimaryKey(getContext(UserMapper.class.getMethod("updateByPrimaryKey", Object.class))).trim();
         System.out.println(actual);
-        String expected = "<script>UPDATE `user`<set>`name` = #{name}, `address` = #{address}, `birth` = #{birth}, `create_time` = #{createTime}, `update_time` = #{updateTime}, </set>WHERE `id` = #{id}</script>";
+        String expected = "<script>UPDATE `user`<set>`address` = #{address}, `birth` = #{birth}, `create_time` = #{createTime}, `name` = #{name}, `update_time` = #{updateTime}, </set>WHERE `id` = #{id}</script>";
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void buildUpdateByPrimaryKeySelective() throws Exception {
         String actual = CrudSqlBuilder.buildUpdateByPrimaryKeySelective(getContext(UserMapper.class.getMethod("updateByPrimaryKeySelective", Object.class))).trim();
-        String expected = "<script>UPDATE `user`<set><if test=\"name != null\">`name` = #{name}, </if><if test=\"address != null\">`address` = #{address}, </if><if test=\"birth != null\">`birth` = #{birth}, </if><if test=\"createTime != null\">`create_time` = #{createTime}, </if><if test=\"updateTime != null\">`update_time` = #{updateTime}, </if></set>WHERE `id` = #{id}</script>";
+        String expected = "<script>UPDATE `user`<set><if test=\"address != null\">`address` = #{address}, </if><if test=\"birth != null\">`birth` = #{birth}, </if><if test=\"createTime != null\">`create_time` = #{createTime}, </if><if test=\"name != null\">`name` = #{name}, </if><if test=\"updateTime != null\">`update_time` = #{updateTime}, </if></set>WHERE `id` = #{id}</script>";
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void buildUpsert() throws Exception {
         String actual = CrudSqlBuilder.buildUpsert(getContext(UserMapper.class.getMethod("upsert", Object.class))).trim();
-        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`id`, `name`, `address`, `birth`, `create_time`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{id}, #{name}, #{address}, #{birth}, #{createTime}, #{updateTime}, </trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \">`name` = #{name}, `address` = #{address}, `birth` = #{birth}, `create_time` = #{createTime}, `update_time` = #{updateTime}, </trim></script>";
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \">`address`, `birth`, `create_time`, `id`, `name`, `update_time`, </trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \">#{address}, #{birth}, #{createTime}, #{id}, #{name}, #{updateTime}, </trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \">`address` = #{address}, `birth` = #{birth}, `create_time` = #{createTime}, `name` = #{name}, `update_time` = #{updateTime}, </trim></script>";
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void buildUpsertSelective() throws Exception {
         String actual = CrudSqlBuilder.buildUpsertSelective(getContext(UserMapper.class.getMethod("upsertSelective", Object.class))).trim();
-        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">`id`, </if><if test=\"name != null\">`name`, </if><if test=\"address != null\">`address`, </if><if test=\"birth != null\">`birth`, </if><if test=\"createTime != null\">`create_time`, </if><if test=\"updateTime != null\">`update_time`, </if></trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \"><if test=\"id != null\">#{id}, </if><if test=\"name != null\">#{name}, </if><if test=\"address != null\">#{address}, </if><if test=\"birth != null\">#{birth}, </if><if test=\"createTime != null\">#{createTime}, </if><if test=\"updateTime != null\">#{updateTime}, </if></trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \"><if test=\"name != null\">`name` = #{name}, </if><if test=\"address != null\">`address` = #{address}, </if><if test=\"birth != null\">`birth` = #{birth}, </if><if test=\"createTime != null\">`create_time` = #{createTime}, </if><if test=\"updateTime != null\">`update_time` = #{updateTime}, </if></trim></script>";
+        String expected = "<script>INSERT INTO `user`<trim prefix=\"(\" suffix=\")\" suffixOverrides=\", \"><if test=\"address != null\">`address`, </if><if test=\"birth != null\">`birth`, </if><if test=\"createTime != null\">`create_time`, </if><if test=\"id != null\">`id`, </if><if test=\"name != null\">`name`, </if><if test=\"updateTime != null\">`update_time`, </if></trim><trim prefix=\"VALUES (\" suffix=\")\" suffixOverrides=\", \"><if test=\"address != null\">#{address}, </if><if test=\"birth != null\">#{birth}, </if><if test=\"createTime != null\">#{createTime}, </if><if test=\"id != null\">#{id}, </if><if test=\"name != null\">#{name}, </if><if test=\"updateTime != null\">#{updateTime}, </if></trim> ON DUPLICATE KEY UPDATE <trim suffixOverrides=\", \"><if test=\"address != null\">`address` = #{address}, </if><if test=\"birth != null\">`birth` = #{birth}, </if><if test=\"createTime != null\">`create_time` = #{createTime}, </if><if test=\"name != null\">`name` = #{name}, </if><if test=\"updateTime != null\">`update_time` = #{updateTime}, </if></trim></script>";
         assertThat(actual).isEqualTo(expected);
     }
 

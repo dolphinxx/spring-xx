@@ -1,5 +1,5 @@
 package com.jagsii.springxx.mybatis;
 
-public interface Criteria<T> {
+public interface Criteria {
     String buildSql();
 }
