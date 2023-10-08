@@ -7,7 +7,7 @@ import java.util.Map;
 public class CriteriaSqlBuilder {
     public static String buildCountByCriteria(ProviderContext context, Map<String, Object> params) {
         EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(context);
-        QueryCriteria<?> criteria = (QueryCriteria<?>) params.get("criteria");
+        AbstractQueryCriteria<?, ?, ?> criteria = (AbstractQueryCriteria<?, ?, ?>) params.get("criteria");
         return "SELECT COUNT(0) FROM " +
                 SqlBuilderHelper.buildTableName(tableInfo) +
                 " WHERE " +
@@ -20,7 +20,7 @@ public class CriteriaSqlBuilder {
 
     public static String buildSelectByCriteria(ProviderContext context, Map<String, Object> params) {
         EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(context);
-        QueryCriteria<?> criteria = (QueryCriteria<?>) params.get("criteria");
+        AbstractQueryCriteria<?, ?, ?> criteria = (AbstractQueryCriteria<?, ?, ?>) params.get("criteria");
         return "SELECT * FROM " +
                 SqlBuilderHelper.buildTableName(tableInfo) +
                 " WHERE " +
@@ -35,7 +35,7 @@ public class CriteriaSqlBuilder {
 
     public static String buildDeleteByCriteria(ProviderContext context, Map<String, Object> params) {
         EntityTableInfo tableInfo = SqlBuilderHelper.getTableInfo(context);
-        QueryCriteria<?> criteria = (QueryCriteria<?>) params.get("criteria");
+        AbstractQueryCriteria<?, ?, ?> criteria = (AbstractQueryCriteria<?, ?, ?>) params.get("criteria");
         return "DELETE FROM " + SqlBuilderHelper.buildTableName(tableInfo) + " WHERE " + criteria.buildSql();
     }
 }
