@@ -1,9 +1,11 @@
 package com.jagsii.springxx.test;
 
+import lombok.SneakyThrows;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -12,11 +14,15 @@ import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConf
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -29,6 +35,8 @@ public abstract class MybatisMapperTests extends SpringTests {
     protected SqlSessionFactory sqlSessionFactory;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+    @Autowired
+    protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     protected Long insertForGeneratedId(String sql, Object... params) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -43,6 +51,10 @@ public abstract class MybatisMapperTests extends SpringTests {
     }
 
     protected <T> void testMapper(Consumer<T> fn, Class<T> mapperClass) {
+        testMapper(mapperClass, fn);
+    }
+
+    protected <T> void testMapper(Class<T> mapperClass, Consumer<T> fn) {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         if (!configuration.hasMapper(mapperClass)) {
             sqlSessionFactory.getConfiguration().addMapper(mapperClass);
@@ -50,5 +62,17 @@ public abstract class MybatisMapperTests extends SpringTests {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             fn.accept(sqlSession.getMapper(mapperClass));
         }
+    }
+
+    @SneakyThrows
+    protected Map<String, Object> beanToMap(Object bean) {
+        Map<String, Object> result = new HashMap<>();
+        for (PropertyDescriptor prop : BeanUtils.getPropertyDescriptors(bean.getClass())) {
+            if (prop.getReadMethod() == null || prop.getWriteMethod() == null) {
+                continue;
+            }
+            result.put(prop.getName(), prop.getReadMethod().invoke(bean));
+        }
+        return result;
     }
 }
