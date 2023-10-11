@@ -12,3 +12,19 @@ spring:
       static-locations:
         - classpath:/static/
     locale: zh_CN
+
+platform:
+  security:
+    permit-all:
+      ## home
+      - /
+      ## favicon
+      - /favicon.ico
+      ## static resources
+      - /static/**
+      ## captcha
+      - /captcha
+      - /captcha/behavior
+  captcha:
+    path-matches: ## format {id}[?] [method:]path
+      - login? POST:/login

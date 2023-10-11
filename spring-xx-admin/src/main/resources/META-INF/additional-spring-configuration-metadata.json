@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "platform.security.permit-all",
+      "type": "java.util.List<java.lang.String>",
+      "description": "The request paths to exclude from security authentication. Format: `[method:]path`."
+    },
+    {
+      "name": "platform.captcha.path-matches",
+      "type": "java.util.List<java.lang.String>",
+      "description": "The request paths to use captcha. Format: `{id}[?] [method:]path`."
+    }
+  ]
+}

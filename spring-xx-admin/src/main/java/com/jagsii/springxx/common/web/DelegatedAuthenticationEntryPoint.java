@@ -1,10 +1,8 @@
 package com.jagsii.springxx.common.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,11 +11,10 @@ import java.io.IOException;
 
 public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Autowired
-    @Qualifier("handlerExceptionResolver")
-    private HandlerExceptionResolver resolver;
+    private RestResponseWriter restResponseWriter;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        resolver.resolveException(request, response, null, authException);
+        restResponseWriter.write(RestExceptionConverter.convert(authException), response);
     }
 }

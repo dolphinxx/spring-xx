@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +15,6 @@ import org.springframework.mock.web.MockCookie;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,8 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         AuthenticationTest.TestController.class,
 })
 public class AuthenticationTest extends WebTests {
-    @Autowired
-    MockMvc mvc;
     @MockBean
     UserDetailsService userDetailsService;
 

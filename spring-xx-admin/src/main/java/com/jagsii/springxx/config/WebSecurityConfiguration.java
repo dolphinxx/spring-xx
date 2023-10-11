@@ -1,14 +1,13 @@
 package com.jagsii.springxx.config;
 
-import com.jagsii.springxx.common.security.PermVoter;
-import com.jagsii.springxx.common.security.RestAuthenticationFailureHandler;
-import com.jagsii.springxx.common.security.RestAuthenticationSuccessHandler;
-import com.jagsii.springxx.common.security.RestLogoutSuccessHandler;
+import com.jagsii.springxx.common.captcha.CaptchaFilter;
+import com.jagsii.springxx.common.security.*;
+import com.jagsii.springxx.common.utils.ConfigUtils;
 import com.jagsii.springxx.common.web.DelegatedAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.annotation.Jsr250Voter;
@@ -19,10 +18,13 @@ import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -30,6 +32,12 @@ import java.util.List;
 
 @Configuration
 public class WebSecurityConfiguration {
+    private final CaptchaFilter captchaFilter;
+
+    public WebSecurityConfiguration(@Autowired(required = false) CaptchaFilter captchaFilter) {
+        this.captchaFilter = captchaFilter;
+    }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(PlatformProperties platformProperties) {
         return (web) -> {
@@ -47,54 +55,23 @@ public class WebSecurityConfiguration {
                 //      - POST:/login
                 //      ## static resources
                 //      - /static/**
-                for (String p : platformProperties.getSecurity().getPermitAll()) {
-                    if (p.contains(":")) {
-                        String[] tuple = p.split(":");
-                        ignored.antMatchers(HttpMethod.resolve(tuple[0].trim().toUpperCase()), tuple[1].trim());
-                    } else {
-                        ignored.antMatchers(p);
-                    }
-                }
+                ignored.requestMatchers(platformProperties.getSecurity().getPermitAll().stream().map(ConfigUtils::parseMatcher).toArray(AntPathRequestMatcher[]::new));
             }
         };
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, PersistentTokenRepository persistentTokenRepository) throws Exception {
-        http.authorizeRequests(requests -> {
-//                    if (platformProperties.getSecurity().getPermitAll() != null) {
-//                        // platform:
-//                        //   security:
-//                        //    permit-all:
-//                        //      ## home
-//                        //      - /
-//                        //      ## favicon
-//                        //      - /favicon.ico
-//                        //      ## login submit
-//                        //      - POST:/login
-//                        //      ## static resources
-//                        //      - /static/**
-//                        List<AntPathRequestMatcher> permitAllMatchers = new ArrayList<>(platformProperties.getSecurity().getPermitAll().size());
-//                        for (String p : platformProperties.getSecurity().getPermitAll()) {
-//                            if (p.contains(":")) {
-//                                String[] tuple = p.split(":");
-//                                permitAllMatchers.add(new AntPathRequestMatcher(tuple[1].trim(), tuple[0].trim().toUpperCase()));
-//                            } else {
-//                                permitAllMatchers.add(new AntPathRequestMatcher(p));
-//                            }
-//                        }
-//                        if (permitAllMatchers.size() > 0) {
-//                            requests.requestMatchers(permitAllMatchers.toArray(new AntPathRequestMatcher[0])).permitAll();
-//                        }
-//                    }
-                    requests.anyRequest().authenticated().accessDecisionManager(webAccessDecisionManager());
-                }).csrf().disable()
-                .formLogin((form) -> form.successHandler(restAuthenticationSuccessHandler()).failureHandler(restAuthenticationFailureHandler()))
-                .logout(configurer -> configurer.logoutSuccessHandler(restLogoutSuccessHandler()))
-                .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint()))
-                .rememberMe(configurer -> configurer.tokenRepository(persistentTokenRepository))
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint());
+        http.authorizeRequests(requests -> requests.anyRequest().authenticated().accessDecisionManager(webAccessDecisionManager()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(customizer -> customizer.successHandler(restAuthenticationSuccessHandler()).failureHandler(restAuthenticationFailureHandler()))
+                .logout(customizer -> customizer.logoutSuccessHandler(restLogoutSuccessHandler()))
+                .httpBasic(customizer -> customizer.authenticationEntryPoint(authenticationEntryPoint()))
+                .rememberMe(customizer -> customizer.tokenRepository(persistentTokenRepository))
+                .exceptionHandling(customizer -> customizer.authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(restAccessDeniedHandler()));
+        if (captchaFilter != null) {
+            http.addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class);
+        }
         return http.build();
     }
 
@@ -120,6 +97,11 @@ public class WebSecurityConfiguration {
     @Bean
     public RestAuthenticationFailureHandler restAuthenticationFailureHandler() {
         return new RestAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public RestAccessDeniedHandler restAccessDeniedHandler() {
+        return new RestAccessDeniedHandler();
     }
 
     @Bean

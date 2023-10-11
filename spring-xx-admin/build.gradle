@@ -16,7 +16,10 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "com.mysql:mysql-connector-j"
+    implementation "cloud.tianai.captcha:tianai-captcha:1.4.1"
+    implementation "com.google.guava:guava:32.1.2-jre"
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation project(":spring-xx-tests")
 }

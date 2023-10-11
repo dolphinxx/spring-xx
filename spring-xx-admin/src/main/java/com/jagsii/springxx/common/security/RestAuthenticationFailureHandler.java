@@ -18,6 +18,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        // TODO require captcha after 2 failure per ip+UA
         resolver.resolveException(request, response, null, exception);
     }
 }
