@@ -21,5 +21,6 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation project(":spring-xx-tests")
 }
