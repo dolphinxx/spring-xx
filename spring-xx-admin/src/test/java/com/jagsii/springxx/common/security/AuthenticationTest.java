@@ -24,6 +24,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Locale;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,6 +40,14 @@ public class AuthenticationTest extends WebTests {
     @BeforeAll
     static void beforeAll() {
         Locale.setDefault(Locale.SIMPLIFIED_CHINESE);
+    }
+
+    @Test
+    void anonymous() throws Exception {
+        mvc.perform(get("/a/b/c"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", Matchers.equalTo(401)));
     }
 
     @Test
@@ -122,7 +131,7 @@ public class AuthenticationTest extends WebTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(isOk)
-                .andExpect(jsonPath("$.data.principal.name", Matchers.equalTo("Foo")));
+                .andExpect(jsonPath("$.data.name", Matchers.equalTo("Foo")));
         Mockito.verify(userDetailsService).loadUserByUsername("foo");
     }
 

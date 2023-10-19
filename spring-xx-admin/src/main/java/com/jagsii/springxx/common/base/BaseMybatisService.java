@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseMybatisService<T, ID, MAPPER extends BaseMapper<T, ID>> implements BaseService<T, ID> {
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     protected MAPPER mapper;
 
@@ -49,9 +50,7 @@ public abstract class BaseMybatisService<T, ID, MAPPER extends BaseMapper<T, ID>
         map.put("offset", page.getOffset());
         map.put("limit", page.getSize());
         List<T> items = total == 0 ? Collections.emptyList() : getMapper().selectByMap(map);
-        Page<T> pagination = new Page<>(page, total);
-        pagination.setItems(items);
-        return pagination;
+        return new Page<>(page, total, items);
     }
 
     @Override

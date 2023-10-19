@@ -1,7 +1,7 @@
 package com.jagsii.springxx.config;
 
 import com.jagsii.springxx.common.captcha.CaptchaHandlerInterceptor;
-import com.jagsii.springxx.common.security.CurrentUserArgumentResolver;
+import com.jagsii.springxx.common.security.PrincipalArgumentResolver;
 import com.jagsii.springxx.common.web.RestResponseWriter;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -50,7 +50,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CurrentUserArgumentResolver());
+        resolvers.add(new PrincipalArgumentResolver());
     }
 
     @Override

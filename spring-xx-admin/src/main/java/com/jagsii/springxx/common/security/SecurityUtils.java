@@ -8,11 +8,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class SecurityUtils {
@@ -49,10 +54,10 @@ public class SecurityUtils {
         onlineUsers.remove(userId);
     }
 
-    public static CurrentUser getCurrentUser() {
+    public static Principal getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return (CurrentUser) authentication.getDetails();
+            return (Principal) authentication.getPrincipal();
         }
         return null;
     }
@@ -83,5 +88,34 @@ public class SecurityUtils {
             builder.append((char) c);
         }
         return builder.toString();
+    }
+
+    /**
+     * Sets a cookie indicating that the current session has been authenticated. Because the remember-me cookie is httpOnly and cannot be accessed by js.
+     */
+    public static void sendAuthCookie(HttpServletResponse response) {
+        Collection<String> setCookies = response.getHeaders("set-cookie");
+        if (setCookies.isEmpty()) {
+            return;
+        }
+        String rememberMeCookieStr = null;
+        for (String c : setCookies) {
+            if (c.startsWith("remember-me=")) {
+                rememberMeCookieStr = c;
+                break;
+            }
+        }
+        if (rememberMeCookieStr == null) {
+            return;
+        }
+        Matcher m = Pattern.compile("max-age=(\\d+)", Pattern.CASE_INSENSITIVE).matcher(rememberMeCookieStr);
+        if (!m.find()) {
+            return;
+        }
+        Cookie cookie = new Cookie("authenticated", "1");
+        cookie.setHttpOnly(false);
+        cookie.setMaxAge(Integer.parseInt(m.group(1)) - 10);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }

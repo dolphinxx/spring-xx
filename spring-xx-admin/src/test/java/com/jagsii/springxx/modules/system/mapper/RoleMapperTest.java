@@ -1,12 +1,12 @@
 package com.jagsii.springxx.modules.system.mapper;
 
 import com.jagsii.springxx.DbTests;
+import com.jagsii.springxx.common.security.data.RoleAndPermRawData;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 class RoleMapperTest extends DbTests {
 
@@ -34,17 +34,17 @@ class RoleMapperTest extends DbTests {
             for (int i = 1; i < 8; i++) {
                 jdbcTemplate.update(insertRoleXPermSql, i, i);
             }
-            List<Map<String, Object>> actual = mapper.selectRolesAndPerms();
-            actual.sort(Comparator.comparingLong(a -> (Long) a.get("id")));
+            List<RoleAndPermRawData> actual = mapper.selectRolesAndPerms();
+            actual.sort(Comparator.comparingLong(RoleAndPermRawData::getId));
             Assertions.assertThat(actual).hasSize(8);
-            Assertions.assertThat(actual.get(0)).containsEntry("parent_id", 6L).containsEntry("perm_value", "perm1");
-            Assertions.assertThat(actual.get(1)).doesNotContainKey("parent_id").containsEntry("perm_value", "perm2");
-            Assertions.assertThat(actual.get(2)).containsEntry("parent_id", 1L).containsEntry("perm_value", "perm3");
-            Assertions.assertThat(actual.get(3)).doesNotContainKey("parent_id").containsEntry("perm_value", "perm4");
-            Assertions.assertThat(actual.get(4)).containsEntry("parent_id", 3L).containsEntry("perm_value", "perm5");
-            Assertions.assertThat(actual.get(5)).containsEntry("parent_id", 2L).containsEntry("perm_value", "perm6");
-            Assertions.assertThat(actual.get(6)).containsEntry("parent_id", 5L).containsEntry("perm_value", "perm7");
-            Assertions.assertThat(actual.get(7)).containsEntry("parent_id", 4L).doesNotContainKey("perm_value");
+            Assertions.assertThat(actual.get(0)).hasFieldOrPropertyWithValue("parentId", 6L).hasFieldOrPropertyWithValue("permValue", "perm1");
+            Assertions.assertThat(actual.get(1)).hasFieldOrPropertyWithValue("parentId", null).hasFieldOrPropertyWithValue("permValue", "perm2");
+            Assertions.assertThat(actual.get(2)).hasFieldOrPropertyWithValue("parentId", 1L).hasFieldOrPropertyWithValue("permValue", "perm3");
+            Assertions.assertThat(actual.get(3)).hasFieldOrPropertyWithValue("parentId", null).hasFieldOrPropertyWithValue("permValue", "perm4");
+            Assertions.assertThat(actual.get(4)).hasFieldOrPropertyWithValue("parentId", 3L).hasFieldOrPropertyWithValue("permValue", "perm5");
+            Assertions.assertThat(actual.get(5)).hasFieldOrPropertyWithValue("parentId", 2L).hasFieldOrPropertyWithValue("permValue", "perm6");
+            Assertions.assertThat(actual.get(6)).hasFieldOrPropertyWithValue("parentId", 5L).hasFieldOrPropertyWithValue("permValue", "perm7");
+            Assertions.assertThat(actual.get(7)).hasFieldOrPropertyWithValue("parentId", 4L).hasFieldOrPropertyWithValue("permValue", null);
         });
     }
 

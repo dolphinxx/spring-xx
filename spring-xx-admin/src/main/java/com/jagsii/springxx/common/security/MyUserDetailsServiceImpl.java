@@ -1,5 +1,6 @@
 package com.jagsii.springxx.common.security;
 
+import com.jagsii.springxx.common.security.data.RoleAndPermRawData;
 import com.jagsii.springxx.modules.system.entity.User;
 import com.jagsii.springxx.modules.system.service.RoleService;
 import com.jagsii.springxx.modules.system.service.UserService;
@@ -26,21 +27,8 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
 
     @Override
     public void reloadAuthorities() {
-        List<Map<String, Object>> list = roleService.findAllRolesAndPerms();
-        Map<Long, RoleInfo> cache = new HashMap<>();
-        for (Map<String, Object> m : list) {
-            Long id = (Long) m.get("id");
-            RoleInfo role = cache.computeIfAbsent(id, key -> new RoleInfo(id, (String) m.get("role_value"), (Long) m.get("parent_id")));
-            if (m.containsKey("perm_value")) {
-                role.addPerm((String) m.get("perm_value"));
-            }
-        }
-        for (RoleInfo role : cache.values()) {
-            if (role.getParentId() != null) {
-                cache.get(role.getParentId()).addChild(role);
-            }
-        }
-        roleCache = cache;
+        List<RoleAndPermRawData> list = roleService.findAllRolesAndPerms();
+        roleCache = formatAuthorities(list);
     }
 
     @Override
@@ -61,7 +49,7 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
         return new Principal(user.getName(), user.getUsername(), user.getPassword(), authorities, Objects.equals(user.getStatus(), 1), true, true, true);
     }
 
-    private void collectAuthorities(List<GrantedAuthority> authorities, RoleInfo role) {
+    static void collectAuthorities(List<GrantedAuthority> authorities, RoleInfo role) {
         authorities.add(new RoleGrantedAuthority(role.getValue()));
         if (role.getPerms().size() > 0) {
             for (String perm : role.getPerms()) {
@@ -73,5 +61,22 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
                 collectAuthorities(authorities, child);
             }
         }
+    }
+
+    static Map<Long, RoleInfo> formatAuthorities(List<RoleAndPermRawData> list) {
+        Map<Long, RoleInfo> cache = new HashMap<>();
+        for (RoleAndPermRawData m : list) {
+            Long id = m.getId();
+            RoleInfo role = cache.computeIfAbsent(id, key -> new RoleInfo(id, m.getRoleValue(), m.getParentId()));
+            if (m.getPermValue() != null) {
+                role.addPerm(m.getPermValue());
+            }
+        }
+        for (RoleInfo role : cache.values()) {
+            if (role.getParentId() != null) {
+                cache.get(role.getParentId()).addChild(role);
+            }
+        }
+        return cache;
     }
 }

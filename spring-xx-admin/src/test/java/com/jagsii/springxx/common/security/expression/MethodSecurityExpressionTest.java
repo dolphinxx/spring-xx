@@ -23,12 +23,13 @@ import java.util.List;
 
 @Import({
         SecurityConfiguration.class,
-        ExtMethodSecurityExpressionTest.FooServiceImpl.class,
+        MethodSecurityExpressionTest.FooServiceImpl.class,
 })
 @ImportAutoConfiguration({
         SecurityAutoConfiguration.class
 })
-public class ExtMethodSecurityExpressionTest extends SpringTests {
+public class MethodSecurityExpressionTest extends SpringTests {
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     FooService fooService;
 
@@ -54,23 +55,12 @@ public class ExtMethodSecurityExpressionTest extends SpringTests {
         fooService.read();
     }
 
-    @Test
-    void hasPerm() throws Exception {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new PermGrantedAuthority("foo:read"));
-        Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(new Object(), new Object(), authorities);
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        fooService.read2();
-    }
-
     public interface FooService {
         void denied();
 
         void read();
 
-        void read2();
+//        void read2();
     }
 
     @Service
@@ -84,12 +74,6 @@ public class ExtMethodSecurityExpressionTest extends SpringTests {
         @Override
         @PreAuthorize("hasPermission(null, 'foo:read')")
         public void read() {
-            System.out.println("success!");
-        }
-
-        @Override
-        @PreAuthorize("hasPerm('foo:read')")
-        public void read2() {
             System.out.println("success!");
         }
     }

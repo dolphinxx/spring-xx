@@ -7,14 +7,14 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
+public class PrincipalArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameter().getType().equals(CurrentUser.class);
+        return parameter.getParameter().getType().equals(Principal.class);
     }
 
     @Override
     public Object resolveArgument(@NonNull MethodParameter parameter, ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return SecurityUtils.getCurrentUser();
+        return SecurityUtils.getPrincipal();
     }
 }
