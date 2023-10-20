@@ -59,7 +59,7 @@
 
           <v-messages :active="true" color="error" :messages="errorMsg" style="padding-bottom: 6px;padding-inline-start: 16px;padding-inline-end: 16px;opacity: 1;"/>
           <v-btn
-            block
+            :block="true"
             class="mb-8"
             color="blue"
             size="large"
@@ -80,12 +80,11 @@ import {requiredRule, usernameRule, lengthBetweenRuleBuilder} from "@/utils/vali
 import loginLogo from "@/assets/login-logo.svg";
 import {useRouter} from "vue-router";
 import {useAppStore} from "@/store/app";
-import type {VForm} from "vuetify/components";
 
 const router = useRouter();
 const store = useAppStore();
 
-const formRef = ref(null);
+const formRef = ref<VFormRef>();
 
 const username = ref("");
 const password = ref("");
@@ -97,10 +96,10 @@ const usernameRules = [requiredRule, usernameRule, lengthBetweenRuleBuilder(4, 2
 const passwordRules = [requiredRule, lengthBetweenRuleBuilder(6, 20)];
 
 const submitLogin = async () => {
-  if (!(await formRef.value.validate()).valid) {
+  if (!(await formRef.value!.validate()).valid) {
     return;
   }
-  formRef.value.resetValidation();
+  formRef.value!.resetValidation();
   errorMsg.value = "";
   login(username.value, password.value, rememberMe.value).then(r => {
     store.setPrincipal(r);

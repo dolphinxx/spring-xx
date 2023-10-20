@@ -1,98 +1,285 @@
 <template>
   <v-container>
     <auto-form :meta="meta" :data="data"/>
-    <vue-date-picker v-model="data.createTime" format="yyyy-MM-dd HH:mm:ss" locale="zh-CN" :format-locale="zhCN"></vue-date-picker>
-    <date-picker v-model="data.createTime"></date-picker>
   </v-container>
 </template>
 <script lang="ts" setup>
 import AutoForm from "@/components/AutoForm.vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import {zhCN} from "date-fns/locale";
 import {ref} from "vue";
-import DatePicker from "@/components/DatePicker.vue";
-const meta:FormFieldGroup[] = [
+const meta: FormFieldGroup[] = [
   {
-    title: '基本信息',
+    title: 'Input',
     fields: [
       {
-        key: 'id',
-        title: 'ID',
+        key: 'input',
+        title: 'Input',
       },
       {
-        key: 'name',
-        title: '名称',
-        placeholder: '请输入昵称',
+        key: 'placeholder',
+        title: 'Placeholder',
+        placeholder: 'input placeholder',
       },
       {
-        key: 'username',
-        title: '账号',
-        hint: '用于登录的账号',
+        key: 'hint',
+        title: 'Hint',
+        hint: 'input hint',
       },
     ],
   },
   {
-    title: '审核信息',
+    title: 'Checkbox',
     fields: [
       {
-        key: 'creatorId',
-        title: '创建者',
+        key: 'checkbox',
+        title: 'Checkbox',
+        type: 'checkbox',
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
       },
       {
-        key: 'lastModifierId',
-        title: '修改者',
+        key: 'checkbox2',
+        title: 'Checkbox',
+        type: 'checkbox',
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
       },
       {
-        key: 'lastModifyTime',
-        title: '修改时间',
-        type: 'datetime',
+        key: 'checkboxMultiple',
+        title: 'Multiple',
+        type: 'checkbox',
+        multiple: true,
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
+      },
+      {
+        key: 'checkboxMultiple2',
+        title: 'Multiple',
+        type: 'checkbox',
+        multiple: true,
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
       },
     ],
   },
   {
-    title: '其它信息',
+    title: 'Radio',
     fields: [
       {
-        key: 'startTime',
-        title: '修改时间',
-        type: 'datetime',
-        range: ['endTime']
+        key: 'radio',
+        title: 'Radio',
+        type: 'radio',
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
+      },
+    ],
+  },
+  {
+    title: 'Combobox',
+    fields: [
+      {
+        key: 'combobox',
+        title: 'Combobox',
+        type: 'combobox',
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
       },
       {
-        key: 'createDate',
-        title: '创建日期',
+        key: 'comboboxMultiple',
+        title: 'Multiple',
+        type: 'combobox',
+        multiple: true,
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
+      },
+    ],
+  },
+  {
+    title: '时间选取',
+    fields: [
+      {
+        key: 'date',
+        title: 'Date',
         type: 'date',
       },
       {
-        key: 'createYear',
-        title: '创建年份',
-        type: {type: 'date', subtype: 'year'},
+        key: 'date1',
+        title: 'Date',
+        type: 'date',
       },
       {
         key: 'time',
-        title: '时间',
+        title: 'Time',
         type: {type: 'date', subtype: 'time'},
       },
       {
         key: 'time1',
-        title: '时间',
+        title: 'Time',
         type: {type: 'date', subtype: 'time'},
-        range: ['time2']
+      },
+      {
+        key: 'dateTime',
+        title: 'DateTime',
+        type: 'datetime',
+      },
+      {
+        key: 'dateTime1',
+        title: 'DateTime',
+        type: 'datetime',
+      },
+      {
+        key: 'year',
+        title: 'Year',
+        type: {type: 'date', subtype: 'year'},
+      },
+      {
+        key: 'year1',
+        title: 'Year',
+        type: {type: 'date', subtype: 'year'},
+      },
+      {
+        key: 'month',
+        title: 'Month',
+        type: {type: 'date', subtype: 'month'},
+      },
+      {
+        key: 'month1',
+        title: 'Month',
+        type: {type: 'date', subtype: 'month'},
+      },
+      {
+        key: 'startDate',
+        title: 'Date区间',
+        type: 'date',
+        range: ['endDate']
+      },
+      {
+        key: 'startTime',
+        title: 'Time区间',
+        type: {type: 'date', subtype: 'time'},
+        range: ['endTime']
+      },
+      {
+        key: 'startDateTime',
+        title: 'DateTime区间',
+        type: 'datetime',
+        range: ['endDateTime']
+      },
+      {
+        key: 'startYear',
+        title: 'Year区间',
+        type: {type: 'date', subtype: 'year'},
+        range: ['endYear']
+      },
+      {
+        key: 'startMonth',
+        title: 'Month区间',
+        type: {type: 'date', subtype: 'month'},
+        range: ['endMonth']
       },
     ],
   }
 ];
 const data = ref({
-  id: 1,
-  name: '管理员',
-  username: 'admin',
-  createTime: '2000-01-01 01:01:01',
-  startTime: new Date('2000-01-01T01:01:01'),
-  endTime: new Date('2000-02-01T01:01:01'),
+  input: 1,
+  placeholder: '管理员',
+  hint: 'admin',
+  checkbox: 'value2',
+  checkboxMultiple: ['value1', 'value3'],
+  date: new Date('2000-01-01T01:01:01'),
+  dateTime: new Date('2000-01-01T01:01:01'),
+  month: '2000-01',
+  startDate: '2000-01-01',
+  endDate: '2000-01-02',
+  startDateTime: new Date('2000-01-01T01:01:01'),
+  endDateTime: new Date('2000-02-01T01:01:01'),
   createDate: new Date('2000-02-01T01:01:01'),
-  createYear: new Date('2000-02-01T01:01:01'),
+  year: new Date('2000-02-01T01:01:01'),
   time: '01:01:01',
-  time1: '01:01:01',
-  time2: '01:01:01',
+  startTime: '01:01:01',
+  endTime: '01:01:02',
 });
 </script>

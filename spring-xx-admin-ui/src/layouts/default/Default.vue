@@ -1,27 +1,36 @@
 <template>
   <v-app>
-    <v-layout v-if="store.principal">
-      <v-navigation-drawer :model-value="true" :permanent="true" :rail="!showingDrawer">
-        <div class="menu-header">
-          <v-avatar class="menu-header-avatar" color="info">
-            {{ store.principal.name[0].toUpperCase() }}
-          </v-avatar>
-          <span class="menu-header-name">{{ store.principal.name }}</span>
-        </div>
-        <v-divider></v-divider>
+    <v-layout v-if="store.principal" style="position: relative;">
+      <v-navigation-drawer :model-value="true" :permanent="true" :rail="!showingDrawer" style="position: fixed;">
+        <template v-slot:prepend>
+          <div class="menu-header">
+            <v-avatar class="menu-header-avatar" color="info">
+              {{ store.principal.name[0].toUpperCase() }}
+            </v-avatar>
+            <span class="menu-header-name">{{ store.principal.name }}</span>
+          </div>
+          <v-divider></v-divider>
+        </template>
+
         <template v-if="store.menus">
           <Menu :items="store.menus"></Menu>
         </template>
-      </v-navigation-drawer>
-      <v-main>
-        <v-app-bar density="compact">
-          <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? 'mdi-close' : 'mdi-menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
-          <div id="top-navs">
-            <v-btn prepend-icon="mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
-            <v-btn prepend-icon="mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
+        <template v-slot:append>
+          <v-divider></v-divider>
+          <div class="logout">
+            <v-list-item @click="handleLogout" title="退出登录" prepend-icon="mdi-power"/>
           </div>
-          <v-spacer></v-spacer>
-        </v-app-bar>
+        </template>
+      </v-navigation-drawer>
+      <v-app-bar density="compact" style="position: fixed;">
+        <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? 'mdi-close' : 'mdi-menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
+        <div id="top-navs">
+          <v-btn prepend-icon="mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
+          <v-btn prepend-icon="mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
+        </div>
+        <v-spacer></v-spacer>
+      </v-app-bar>
+      <v-main>
         <router-view/>
       </v-main>
     </v-layout>
@@ -33,15 +42,22 @@ import {ref} from "vue";
 import {useRouter} from 'vue-router'
 import {useAppStore} from "@/store/app";
 import Cookie from "js-cookie";
-import {getPrincipal} from "@/api/common";
+import {getPrincipal, logout} from "@/api/common";
 import Menu from "@/components/Menu.vue";
 
 const store = useAppStore();
 const showingDrawer = ref<boolean>(false);
 const router = useRouter();
 
+function handleLogout() {
+  logout().finally(() => {
+    store.setPrincipal(null);
+    redirectToLogin();
+  })
+}
+
 function redirectToLogin() {
-  router.replace({path: '/login'});
+  router.replace({name: 'Login'});
 }
 
 (async function () {

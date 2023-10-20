@@ -112,7 +112,7 @@ export const useAppStore = defineStore('app', {
         }
       });
     },
-    setPrincipal(principal: Principal) {
+    setPrincipal(principal: Principal | null) {
       this.$state.principal = principal;
     }
   },

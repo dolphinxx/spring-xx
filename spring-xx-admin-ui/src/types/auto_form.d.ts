@@ -1,15 +1,17 @@
-type SelectOption = {
+type FieldOption = {
   label: string;
   value: string;
 }
+type FieldSimpleType = "input" | "textarea" | "select" | "combobox" | "checkbox" | "radio" | "date" | "datetime" | "number";
+type FieldDateType = {type:"date", subtype: "date"|"time"|"datetime"|"year"|"month"};
 type FormField = {
   key: string;
   title: string;
   placeholder?: string;
   hint?: string;
-  type?: "input" | "textarea" | "select" | "date" | "datetime" | {type:"date", subtype: "date"|"time"|"datetime"|"year"|"month"} | "number";
+  type?: FieldSimpleType | FieldDateType;
   multiple?: boolean;
-  options?: SelectOption[];
+  options?: FieldOption[];
   format?: string;
   range?: string[];
   cols?: 1 | 2;

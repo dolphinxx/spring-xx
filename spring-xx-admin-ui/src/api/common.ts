@@ -15,6 +15,8 @@ export const login = async (username: string, password: string, rememberMe: bool
   });
 }
 
+export const logout = async (): Promise<void> => request<void>("/logout");
+
 export const getPrincipal = async () => request<Principal>("/sys/principal");
 
 export const getButtons = async () => request<Array<Btn>>("/sys/buttons");

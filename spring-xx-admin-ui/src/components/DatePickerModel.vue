@@ -1,10 +1,11 @@
 <template>
-  <v-text-field v-bind:value="display" v-bind="textFieldProps" @keydown.prevent="">
+  <v-text-field v-bind:value="display" v-bind="inputProps" @keydown.prevent="">
     <template v-slot:prepend-inner>
       <v-icon icon="mdi-calendar"/>
     </template>
     <v-dialog v-model="dialogState" location-strategy="static" activator="parent" width="auto">
       <vue-date-picker
+        ref="dp"
         :locale="localization?.locale"
         :format-locale="localization?.formatLocale"
         :timezone="localization?.timezone"
@@ -16,10 +17,15 @@
         :range="range"
         :partial-range="false"
         :multi-dates="multiple"
-        :multi-calendars="range ? {solo: true} : undefined"
-        v-bind="datePickerProps"
+        :multi-calendars="range && dateType !== 'year' ? {solo: true} : undefined"
+        v-bind="dpProps"
         :inline="true"
-      />
+      >
+        <template v-slot:action-buttons>
+          <v-btn density="compact" variant="flat" @click="() => dp.clearValue()">清空</v-btn>
+          <v-btn density="compact" variant="flat" color="primary" @click="() => dp.selectDate()">选择</v-btn>
+        </template>
+      </vue-date-picker>
     </v-dialog>
   </v-text-field>
 </template>
@@ -60,33 +66,57 @@ const props = defineProps({
     type: String,
     required: false,
   },
-  textFieldProps: {
+  inputProps: {
     required: false,
     type: Object,
   },
-  datePickerProps: {
+  dpProps: {
     required: false,
     type: Object,
   }
 });
+
+const dp = ref();
 
 const enableSeconds = computed(() => !props.dateType || props.dateType === 'datetime' || props.dateType === 'time');
 
 const dialogState = ref(false);
 const fmt = ref(props.format || 'yyyy-MM-dd HH:mm:ss');
 
-const formatTime = v => format(new Date(1970, 0, 1, v.hours, v.minutes, v.seconds), fmt.value, {locale: localization?.formatLocale});
-const parseTime = (val: string | string[]) => {
+type PickerTime = {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+type PickerMonth = {
+  year: number;
+  month: number;
+}
+
+const formatTime = (v: PickerTime) => format(new Date(1970, 0, 1, v.hours, v.minutes, v.seconds), fmt.value, {locale: localization?.formatLocale});
+const formatMonth = (v: PickerMonth) => format(new Date(v.year, v.month, 1, 0, 0, 0), fmt.value, {locale: localization?.formatLocale});
+const parseDateByFormat = (val: string | string[]): Date | Date[] => {
   const referenceDate = new Date();
   if (val instanceof Array) {
-    return val.map(v => {
-      const time = parse(v, fmt.value, referenceDate, {locale: localization?.formatLocale});
-      return {hours: time.getHours(), minutes: time.getMinutes(), seconds: time.getSeconds()};
-    });
+    return val.map(v => parse(v, fmt.value, referenceDate, {locale: localization?.formatLocale}));
   }
-  const time = parse(val as string, fmt.value, referenceDate, {locale: localization?.formatLocale});
-  return {hours: time.getHours(), minutes: time.getMinutes(), seconds: time.getSeconds()};
+  return parse(val as string, fmt.value, referenceDate, {locale: localization?.formatLocale});
+}
+const parseTime = (val: string | string[]): PickerTime | PickerTime[] => {
+  const dates = parseDateByFormat(val);
+  if (val instanceof Array) {
+    return (dates as Array<Date>).map(v => ({hours: v.getHours(), minutes: v.getMinutes(), seconds: v.getSeconds()}));
+  }
+  return {hours: (dates as Date).getHours(), minutes: (dates as Date).getMinutes(), seconds: (dates as Date).getSeconds()};
 };
+
+const parseMonth = (val: string | string[]): PickerMonth | PickerMonth[] => {
+  const dates = parseDateByFormat(val);
+  if (val instanceof Array) {
+    return (dates as Array<Date>).map(v => ({year: v.getFullYear(), month: v.getMonth()}));
+  }
+  return {year: (dates as Date).getFullYear(), month: (dates as Date).getMonth()};
+}
 
 const emit = defineEmits(['update:modelValue']);
 const value = computed({
@@ -96,9 +126,10 @@ const value = computed({
     }
     // 对于time，转换成{hours, minutes, seconds}格式
     if (props.dateType === 'time') {
-      var r = parseTime(props.modelValue);
-      console.log(r);
-      return r;
+      return parseTime(props.modelValue);
+    }
+    if (props.dateType === 'month') {
+      return parseMonth(props.modelValue);
     }
     return props.modelValue
   },
@@ -122,11 +153,18 @@ const display = computed(() => {
 });
 
 const handleDate = val => {
+  console.log(val)
   if (props.dateType === 'time') {
     if (val instanceof Array) {
       value.value = val.map(formatTime);
     } else {
       value.value = formatTime(val) as any;
+    }
+  } else if (props.dateType === 'month') {
+    if (val instanceof Array) {
+      value.value = val.map(formatMonth);
+    } else {
+      value.value = formatMonth(val) as any;
     }
   } else {
     value.value = val;
