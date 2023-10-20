@@ -3,10 +3,32 @@ import {h, ref} from "vue";
 import type {VNode} from "vue";
 import ExpansionCard from "@/components/ExpansionCard.vue";
 import DatePicker from "@/components/DatePicker.vue";
-import {VCardText, VCheckbox, VCol, VCombobox, VDefaultsProvider, VRadio, VRadioGroup, VRow, VTextField} from "vuetify/components";
+import {
+  VCardText,
+  VCheckbox,
+  VCol,
+  VCombobox,
+  VDefaultsProvider,
+  VFileInput,
+  VRadio,
+  VRadioGroup,
+  VRow,
+  VSelect,
+  VSwitch,
+  VTextarea,
+  VTextField
+} from "vuetify/components";
 
 const formDefaults = {
   VTextField: {
+    density: 'compact',
+    variant: 'outlined',
+  },
+  VTextarea: {
+    density: 'compact',
+    variant: 'outlined',
+  },
+  VFileInput: {
     density: 'compact',
     variant: 'outlined',
   },
@@ -19,7 +41,11 @@ const formDefaults = {
   VCombobox: {
     density: 'compact',
     variant: 'outlined',
-  }
+  },
+  VSelect: {
+    density: 'compact',
+    variant: 'outlined',
+  },
 };
 
 const defaultDateFormats = {
@@ -81,6 +107,14 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
       'onUpdate:modelValue': v => data[field.key] = v
     })));
   }
+  if (field.type === 'switch') {
+    return h(VSwitch, {
+      ...commonProps,
+      color: 'primary',
+      modelValue: data[field.key],
+      'onUpdate:modelValue': v => data[field.key] = v,
+    } as Record<string, any>);
+  }
   if (field.type === 'radio') {
     return h(VRadioGroup, {
       ...commonProps,
@@ -100,8 +134,26 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
       chips: field.multiple === true
     } as Record<string, any>);
   }
+  if(field.type === 'select') {
+    return h(VSelect, {
+      ...commonProps,
+      multiple: !!field.multiple,
+      modelValue: data[field.key],
+      'onUpdate:modelValue': v => data[field.key] = v,
+      items: field.options,
+      itemTitle: 'label',
+      itemValue: 'value',
+      chips: field.multiple === true
+    } as Record<string, any>);
+  }
   if (field.type === 'date' || field.type === 'datetime' || (typeof field.type === 'object' && field.type.type === 'date')) {
     return renderDateField(field, data, editMode);
+  }
+  if(field.type === 'textarea') {
+    return h(VTextarea, {...commonProps, counter: true, autoGrow: true});
+  }
+  if(field.type === 'file') {
+    return h(VFileInput, {...commonProps, multiple: !!field.multiple});
   }
   return h(VTextField, {...commonProps});
 };

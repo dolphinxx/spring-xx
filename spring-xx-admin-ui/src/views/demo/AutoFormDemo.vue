@@ -6,6 +6,7 @@
 <script lang="ts" setup>
 import AutoForm from "@/components/AutoForm.vue";
 import {ref} from "vue";
+
 const meta: FormFieldGroup[] = [
   {
     title: 'Input',
@@ -23,6 +24,25 @@ const meta: FormFieldGroup[] = [
         key: 'hint',
         title: 'Hint',
         hint: 'input hint',
+      },
+      {
+        key: 'textarea',
+        title: 'Textarea',
+        type: 'textarea',
+        hint: 'input hint',
+        placeholder: 'Placeholder',
+        cols: 2,
+      },
+      {
+        key: 'file',
+        title: 'File',
+        type: 'file'
+      },
+      {
+        key: 'fileMultiple',
+        title: 'File Multiple',
+        type: 'file',
+        multiple: true,
       },
     ],
   },
@@ -134,6 +154,21 @@ const meta: FormFieldGroup[] = [
     ],
   },
   {
+    title: 'Switch',
+    fields: [
+      {
+        key: 'switch',
+        title: 'Switch',
+        type: 'switch',
+      },
+      {
+        key: 'switch2',
+        title: 'Switch',
+        type: 'switch',
+      },
+    ],
+  },
+  {
     title: 'Combobox',
     fields: [
       {
@@ -159,6 +194,50 @@ const meta: FormFieldGroup[] = [
         key: 'comboboxMultiple',
         title: 'Multiple',
         type: 'combobox',
+        multiple: true,
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
+      },
+    ],
+  },
+  {
+    title: 'Select',
+    fields: [
+      {
+        key: 'select',
+        title: 'Select',
+        type: 'select',
+        options: [
+          {
+            label: 'Label1',
+            value: 'value1',
+          },
+          {
+            label: 'Label2',
+            value: 'value2',
+          },
+          {
+            label: 'Label3',
+            value: 'value3',
+          },
+        ]
+      },
+      {
+        key: 'selectMultiple',
+        title: 'Multiple',
+        type: 'select',
         multiple: true,
         options: [
           {
@@ -265,9 +344,11 @@ const meta: FormFieldGroup[] = [
 ];
 const data = ref({
   input: 1,
+  textarea: '',
   placeholder: '管理员',
   hint: 'admin',
   checkbox: 'value2',
+  switch: true,
   checkboxMultiple: ['value1', 'value3'],
   date: new Date('2000-01-01T01:01:01'),
   dateTime: new Date('2000-01-01T01:01:01'),
