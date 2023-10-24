@@ -89,25 +89,33 @@ function redirectToLogin() {
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+
   .menu-header-name {
     margin-left: 0.5em;
   }
 }
+
 .v-navigation-drawer--rail {
   .menu-header {
     padding-left: 8px;
     padding-right: 8px;
+
     .menu-header-name {
       display: none;
     }
   }
+
   .v-list-group__items {
     .v-list-item {
       padding-inline-start: 8px !important;
     }
   }
 }
+
 #top-navs {
+  display: flex;
+  flex-wrap: nowrap;
+
   .v-btn--active {
     color: rgb(var(--v-theme-primary));
   }
