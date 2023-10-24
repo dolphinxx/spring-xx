@@ -15,9 +15,31 @@ spring:
       static-locations:
         - classpath:/static/
     locale: zh-CN
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
 
 
 platform:
+  oss:
+    enabled: false
+    provider: aliyun
+    ## aliyun的endpont, qiniu的bucket domain
+    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    access-key:
+    secret-key:
+    bucket:
+  storage:
+    enabled: true
+    provider: filesystem
+    base-location: F:/storage
+    base-uri: http://localhost/storage/
+    dev-server: true
   security:
     permit-all:
       ## home
@@ -31,6 +53,3 @@ platform:
   captcha:
     path-matches: ## format {id}[?] [method:]path
       - login? POST:/login
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true

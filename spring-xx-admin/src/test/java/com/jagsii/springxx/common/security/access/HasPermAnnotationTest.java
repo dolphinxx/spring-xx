@@ -44,7 +44,7 @@ class HasPermAnnotationTest extends WebTests {
     void methodAuthorized() throws Exception {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new PermGrantedAuthority("foo:a"));
-        Principal principal = new Principal("foo", "foo", "123456", authorities, true, false, false, false);
+        Principal principal = new Principal(1L, "foo", "foo", "123456", authorities, true, false, false, false);
         mvc.perform(get("/foo/a").with(user(principal)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -56,7 +56,7 @@ class HasPermAnnotationTest extends WebTests {
     void methodUnauthorized() throws Exception {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new PermGrantedAuthority("foo:a"));
-        Principal principal = new Principal("foo", "foo", "123456", authorities, true, false, false, false);
+        Principal principal = new Principal(1L, "foo", "foo", "123456", authorities, true, false, false, false);
         mvc.perform(get("/foo/b").with(user(principal)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -67,7 +67,7 @@ class HasPermAnnotationTest extends WebTests {
     void typeAuthorized() throws Exception {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new PermGrantedAuthority("foo:c"));
-        Principal principal = new Principal("foo", "foo", "123456", authorities, true, false, false, false);
+        Principal principal = new Principal(1L, "foo", "foo", "123456", authorities, true, false, false, false);
         mvc.perform(get("/foo/c").with(user(principal)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -79,7 +79,7 @@ class HasPermAnnotationTest extends WebTests {
     void typeUnauthorized() throws Exception {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new PermGrantedAuthority("foo:a"));
-        Principal principal = new Principal("foo", "foo", "123456", authorities, true, false, false, false);
+        Principal principal = new Principal(1L, "foo", "foo", "123456", authorities, true, false, false, false);
         mvc.perform(get("/foo/c").with(user(principal)))
                 .andDo(print())
                 .andExpect(status().isOk())

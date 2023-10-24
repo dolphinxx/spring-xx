@@ -101,3 +101,13 @@ CREATE TABLE IF NOT EXISTS `parameter`
     `update_time`      timestamp        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB COMMENT '服务端配置';
+
+CREATE TABLE IF NOT EXISTS `storage`
+(
+    `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
+    `key`         varchar(255)    NOT NULL COMMENT '文件唯一键',
+    `creator_id`  bigint unsigned COMMENT '创建者ID',
+    `create_time` timestamp       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `storage_key` (`key`)
+) ENGINE = InnoDB COMMENT '存储资源';

@@ -46,7 +46,7 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
             }
             collectAuthorities(authorities, role);
         }
-        return new Principal(user.getName(), user.getUsername(), user.getPassword(), authorities, Objects.equals(user.getStatus(), 1), true, true, true);
+        return new Principal(user.getId(), user.getName(), user.getUsername(), user.getPassword(), authorities, Objects.equals(user.getStatus(), 1), true, true, true);
     }
 
     static void collectAuthorities(List<GrantedAuthority> authorities, RoleInfo role) {

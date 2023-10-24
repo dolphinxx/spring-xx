@@ -42,7 +42,11 @@ public class R<T> {
     }
 
     public static <T> R<T> clientError() {
-        return new R<>(HttpStatus.BAD_REQUEST.value(), "请求失败！");
+        return clientError("请求失败！");
+    }
+
+    public static <T> R<T> clientError(String msg) {
+        return new R<>(HttpStatus.BAD_REQUEST.value(), msg);
     }
 
     public static <T> R<T> failed(int status, String msg) {

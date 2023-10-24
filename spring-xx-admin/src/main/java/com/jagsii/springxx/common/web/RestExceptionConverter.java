@@ -54,13 +54,12 @@ public class RestExceptionConverter {
 
     public static R<Void> convertServerException(
             ServerException ex, HttpStatus status) {
-        log.error("server error occurred.", ex);
         return convert(ex, null, status);
     }
 
     public static R<Void> convert(Exception ex, String message, HttpStatus status) {
-        if (!(ex instanceof RuntimeException)) {
-            log.error("request failed", ex);
+        if (message == null) {
+            log.error("Exception occurred", ex);
         }
         return R.failed(status.value(), message);
     }

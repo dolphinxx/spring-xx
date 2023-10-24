@@ -52,7 +52,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void httpBasic() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         String authHeader = BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC + " " + Base64.getEncoder().encodeToString("foo:123456".getBytes(StandardCharsets.UTF_8));
         mvc.perform(post("/test/greeting").header(HttpHeaders.AUTHORIZATION, authHeader))
@@ -65,7 +65,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void httpBasic_badCredential() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         String authHeader = BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC + " " + Base64.getEncoder().encodeToString("foo:12345".getBytes(StandardCharsets.UTF_8));
         mvc.perform(post("/test/greeting").header(HttpHeaders.AUTHORIZATION, authHeader))
@@ -77,7 +77,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void httpBasic_rememberMe() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         String authHeader = BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC + " " + Base64.getEncoder().encodeToString("foo:123456".getBytes(StandardCharsets.UTF_8));
         Cookie rememberMe = mvc.perform(post("/test/greeting").header(HttpHeaders.AUTHORIZATION, authHeader).param("remember-me", "1"))
@@ -98,7 +98,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void httpBasic_logout() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         String authHeader = BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC + " " + Base64.getEncoder().encodeToString("foo:123456".getBytes(StandardCharsets.UTF_8));
         Cookie rememberMe = mvc.perform(post("/test/greeting").header(HttpHeaders.AUTHORIZATION, authHeader).param("remember-me", "1"))
@@ -125,7 +125,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void formLogin() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         mvc.perform(post("/login").param("username", "foo").param("password", "123456"))
                 .andDo(print())
@@ -137,7 +137,7 @@ public class AuthenticationTest extends WebTests {
 
     @Test
     void formLogin_wrongPassword() throws Exception {
-        Principal principal = new Principal("Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
+        Principal principal = new Principal(1L, "Foo", "foo", "{noop}123456", Collections.emptyList(), true, true, true, true);
         Mockito.when(userDetailsService.loadUserByUsername("foo")).thenReturn(principal);
         mvc.perform(post("/login").param("username", "foo").param("password", "12345"))
                 .andDo(print())
