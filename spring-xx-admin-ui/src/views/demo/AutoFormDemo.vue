@@ -6,6 +6,7 @@
 <script lang="ts" setup>
 import AutoForm from "@/components/AutoForm.vue";
 import {ref} from "vue";
+
 const meta: FormFieldGroup[] = [
   {
     title: 'Input',
@@ -190,6 +191,40 @@ const meta: FormFieldGroup[] = [
     ],
   },
   {
+    title: 'Slider',
+    fields: [
+      {
+        key: 'slider',
+        title: 'Slider',
+        type: 'slider',
+      },
+      {
+        key: 'slider2',
+        title: 'Slider',
+        type: 'slider',
+      },
+      {
+        key: 'slider',
+        title: 'Slider',
+        type: 'slider',
+        step: 5,
+      },
+      {
+        key: 'sliderStart',
+        title: 'Range Slider',
+        range: 'sliderEnd',
+        type: 'slider',
+      },
+      {
+        key: 'sliderStart2',
+        title: 'Range Slider',
+        range: 'sliderEnd2',
+        type: 'slider',
+        max: 50,
+      },
+    ],
+  },
+  {
     title: 'Combobox',
     fields: [
       {
@@ -334,31 +369,31 @@ const meta: FormFieldGroup[] = [
         key: 'startDate',
         title: 'Date区间',
         type: 'date',
-        range: ['endDate']
+        range: 'endDate'
       },
       {
         key: 'startTime',
         title: 'Time区间',
         type: {type: 'date', subtype: 'time'},
-        range: ['endTime']
+        range: 'endTime'
       },
       {
         key: 'startDateTime',
         title: 'DateTime区间',
         type: 'datetime',
-        range: ['endDateTime']
+        range: 'endDateTime'
       },
       {
         key: 'startYear',
         title: 'Year区间',
         type: {type: 'date', subtype: 'year'},
-        range: ['endYear']
+        range: 'endYear'
       },
       {
         key: 'startMonth',
         title: 'Month区间',
         type: {type: 'date', subtype: 'month'},
-        range: ['endMonth']
+        range: 'endMonth'
       },
     ],
   }
@@ -371,6 +406,7 @@ const data = ref({
   checkbox: 'value2',
   switch: true,
   attachment: undefined,
+  slider2: 10,
   attachmentMultiple: [],
   checkboxMultiple: ['value1', 'value3'],
   date: new Date('2000-01-01T01:01:01'),

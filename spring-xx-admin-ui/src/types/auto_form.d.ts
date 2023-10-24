@@ -23,6 +23,7 @@ type FieldSimpleType =
   | "date"
   | "datetime"
   | "number"
+  | "slider"
   | "file"
   | "attachment"
   | "image";
@@ -36,7 +37,13 @@ type FormField = {
   multiple?: boolean;
   options?: FieldOption[];
   format?: string;
-  range?: string[];
+  // date, slider
+  range?: string;
+  // date, slider
+  min?: any;
+  max?: any;
+  // slider
+  step?: number;
   cols?: 1 | 2;
   render?: (field: FormField, data: any, editMode?: boolean) => any;
   uploadHandler?:FileUploadHandler;

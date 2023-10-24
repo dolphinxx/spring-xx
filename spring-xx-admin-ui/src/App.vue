@@ -1,13 +1,13 @@
 <template>
-  <router-view v-if="initialized"/>
   <v-app>
-    <v-main>
-      <div v-if="!initialized" style="position: fixed;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;">
+    <router-view v-if="initialized"/>
+    <v-main v-if="!initialized">
+      <div style="position: fixed;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;">
         <v-progress-circular indeterminate/>
       </div>
     </v-main>
+    <Dialog></Dialog>
   </v-app>
-  <Dialog></Dialog>
 </template>
 
 <script setup lang="ts">

@@ -11,8 +11,7 @@
     :format="fmt"
     :range="range"
     :partial-range="false"
-    :multi-dates="multiple"
-    :multi-calendars="range && dateType !== 'year' ? {solo: true} : undefined"
+    :teleport="true"
     v-bind="dpProps"
   >
     <template v-slot:action-buttons>
@@ -72,8 +71,8 @@ type PickerMonth = {
   month: number;
 }
 
-const formatTime = (v: PickerTime) => format(new Date(1970, 0, 1, v.hours, v.minutes, v.seconds), fmt.value, {locale: localization?.formatLocale});
-const formatMonth = (v: PickerMonth) => format(new Date(v.year, v.month, 1, 0, 0, 0), fmt.value, {locale: localization?.formatLocale});
+const formatTime = (v: PickerTime) => v ? format(new Date(1970, 0, 1, v.hours, v.minutes, v.seconds), fmt.value, {locale: localization?.formatLocale}) : '';
+const formatMonth = (v: PickerMonth) => v ? format(new Date(v.year, v.month, 1, 0, 0, 0), fmt.value, {locale: localization?.formatLocale}) : '';
 const parseDateByFormat = (val: string | string[]): Date | Date[] => {
   const referenceDate = new Date();
   if (val instanceof Array) {
@@ -84,7 +83,10 @@ const parseDateByFormat = (val: string | string[]): Date | Date[] => {
 const parseTime = (val: string | string[]): PickerTime | PickerTime[] => {
   const dates = parseDateByFormat(val);
   if (val instanceof Array) {
-    return (dates as Array<Date>).map(v => ({hours: v.getHours(), minutes: v.getMinutes(), seconds: v.getSeconds()}));
+    return (dates as Array<Date>).map(vv => {
+      const v = vv || new Date();
+      return {hours: v.getHours(), minutes: v.getMinutes(), seconds: v.getSeconds()};
+    });
   }
   return {hours: (dates as Date).getHours(), minutes: (dates as Date).getMinutes(), seconds: (dates as Date).getSeconds()};
 };

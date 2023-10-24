@@ -1,40 +1,38 @@
 <template>
-  <v-app>
-    <v-layout v-if="store.principal" style="position: relative;">
-      <v-navigation-drawer :model-value="true" :permanent="true" :rail="!showingDrawer" style="position: fixed;">
-        <template v-slot:prepend>
-          <div class="menu-header">
-            <v-avatar class="menu-header-avatar" color="info">
-              {{ store.principal.name[0].toUpperCase() }}
-            </v-avatar>
-            <span class="menu-header-name">{{ store.principal.name }}</span>
-          </div>
-          <v-divider></v-divider>
-        </template>
-
-        <template v-if="store.menus">
-          <Menu :items="store.menus"></Menu>
-        </template>
-        <template v-slot:append>
-          <v-divider></v-divider>
-          <div class="logout">
-            <v-list-item @click="handleLogout" title="退出登录" prepend-icon="$mdi-power"/>
-          </div>
-        </template>
-      </v-navigation-drawer>
-      <v-app-bar density="compact" style="position: fixed;">
-        <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? '$close' : '$menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
-        <div id="top-navs">
-          <v-btn prepend-icon="$mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
-          <v-btn prepend-icon="$mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
+  <v-layout v-if="store.principal" style="position: relative;">
+    <v-navigation-drawer :model-value="true" :permanent="true" :rail="!showingDrawer" style="position: fixed;">
+      <template v-slot:prepend>
+        <div class="menu-header">
+          <v-avatar class="menu-header-avatar" color="info">
+            {{ store.principal.name[0].toUpperCase() }}
+          </v-avatar>
+          <span class="menu-header-name">{{ store.principal.name }}</span>
         </div>
-        <v-spacer></v-spacer>
-      </v-app-bar>
-      <v-main>
-        <router-view/>
-      </v-main>
-    </v-layout>
-  </v-app>
+        <v-divider></v-divider>
+      </template>
+
+      <template v-if="store.menus">
+        <Menu :items="store.menus"></Menu>
+      </template>
+      <template v-slot:append>
+        <v-divider></v-divider>
+        <div class="logout">
+          <v-list-item @click="handleLogout" title="退出登录" prepend-icon="$mdi-power"/>
+        </div>
+      </template>
+    </v-navigation-drawer>
+    <v-app-bar density="compact" style="position: fixed;">
+      <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? '$close' : '$menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
+      <div id="top-navs">
+        <v-btn prepend-icon="$mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
+        <v-btn prepend-icon="$mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
+      </div>
+      <v-spacer></v-spacer>
+    </v-app-bar>
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-layout>
 </template>
 
 <script lang="ts" setup>

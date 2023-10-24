@@ -1,6 +1,6 @@
 <script lang="ts">
-import {h, ref} from "vue";
-import type {VNode} from "vue";
+import {h, ref, unref} from "vue";
+import type {VNode, Component} from "vue";
 import ExpansionCard from "@/components/ExpansionCard.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import AttachmentUploader from "@/components/form/AttachmentUploader.vue";
@@ -13,13 +13,17 @@ import {
   VDefaultsProvider,
   VFileInput,
   VRadio,
-  VRadioGroup,
+  VRadioGroup, VRangeSlider,
   VRow,
-  VSelect,
+  VSelect, VSlider,
   VSwitch,
   VTextarea,
   VTextField
 } from "vuetify/components";
+
+import {useDisplay} from "vuetify";
+import type {DisplayInstance} from "vuetify";
+
 
 const formDefaults = {
   VTextField: {
@@ -29,6 +33,8 @@ const formDefaults = {
   VTextarea: {
     density: 'compact',
     variant: 'outlined',
+    counter: true,
+    autoGrow: true,
   },
   VFileInput: {
     density: 'compact',
@@ -36,9 +42,11 @@ const formDefaults = {
   },
   VCheckbox: {
     density: 'compact',
+    color: 'primary',
   },
   VRadioGroup: {
     density: 'compact',
+    color: 'primary',
   },
   VCombobox: {
     density: 'compact',
@@ -47,6 +55,15 @@ const formDefaults = {
   VSelect: {
     density: 'compact',
     variant: 'outlined',
+  },
+  VSwitch: {
+    color: 'primary',
+  },
+  VSlider: {
+    color: 'primary',
+  },
+  VRangeSlider: {
+    color: 'primary',
   },
 };
 
@@ -58,11 +75,35 @@ const defaultDateFormats = {
   datetime: 'yyyy-MM-dd HH:mm:ss',
 }
 
+const simpleFieldComponents: Record<string, Component> = {
+  textarea: VTextarea,
+  switch: VSwitch,
+  file: VFileInput,
+  attachment: AttachmentUploader,
+  image: ImageUploader,
+};
+
+function isDoubleCol(field: FormField): boolean {
+  if (field.cols === 2) {
+    return true;
+  }
+  if (field.type === undefined) {
+    return false;
+  }
+  if (field.range) {
+    if (typeof field.type === 'string') {
+      return field.type === 'date' || field.type === 'datetime';
+    }
+    return field.type.type === 'date' && (field.type.subtype === 'date' || field.type.subtype === 'datetime');
+  }
+  return false;
+}
+
 function renderDateField(field: FormField, data: any, editMode: boolean | undefined) {
   const type: FieldDateType = typeof field.type === 'object' ? field.type : {type: 'date', subtype: field.type || 'datetime'} as FieldDateType;
   const dpProps: Record<string, any> = {};
   const inputProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint};
-  const isRange = field.range && field.range.length === 1;
+  const isRange = field.range;
   const fmt = field.format || defaultDateFormats[type.subtype];
   if (type.subtype === 'date') {
     dpProps['enable-time-picker'] = false;
@@ -81,10 +122,15 @@ function renderDateField(field: FormField, data: any, editMode: boolean | undefi
   };
   if (isRange) {
     props['range'] = true;
-    props['modelValue'] = [data[field.key], data[field.range![0]]].filter(v => v !== undefined);
+    props['modelValue'] = [data[field.key], data[field.range]].filter(v => v !== undefined);
     props['onUpdate:modelValue'] = v => {
-      data[field.key] = v[0];
-      data[field.range![0]] = v[1];
+      if (v) {
+        data[field.key] = v[0];
+        data[field.range] = v[1];
+      } else {
+        data[field.key] = undefined;
+        data[field.range] = undefined;
+      }
     };
   } else {
     props['modelValue'] = data[field.key];
@@ -100,98 +146,78 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
   if (editMode) {
 
   }
+  if (field.type === 'date' || field.type === 'datetime' || (typeof field.type === 'object' && field.type.type === 'date')) {
+    return renderDateField(field, data, editMode);
+  }
   const commonProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint, clearable: true};
+  if (field.range) {
+    commonProps['modelValue'] = [data[field.key], data[field.range]].filter(v => v !== undefined);
+    commonProps['onUpdate:modelValue'] = v => {
+      data[field.key] = v[0];
+      data[field.range] = v[1];
+    };
+  } else {
+    commonProps['modelValue'] = field.multiple && data[field.key] === undefined ? [] : data[field.key];
+    commonProps['onUpdate:modelValue'] = v => data[field.key] = v;
+  }
+  if (!!field.multiple) {
+    commonProps['multiple'] = true;
+  }
   if (field.type === 'checkbox') {
     return h('div', {}, field.options!.map((option, i, array) => h(VCheckbox, {
       ...commonProps,
       label: option.label,
       class: i === array.length - 1 ? '' : 'hide-details',
-      multiple: !!field.multiple,
       value: option.value,
-      modelValue: field.multiple && data[field.key] === undefined ? [] : data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v
     })));
   }
-  if (field.type === 'switch') {
-    return h(VSwitch, {
-      ...commonProps,
-      color: 'primary',
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v,
-    } as Record<string, any>);
-  }
   if (field.type === 'radio') {
-    return h(VRadioGroup, {
-      ...commonProps,
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v
-    }, () => field.options!.map((option) => h(VRadio, {label: option.label, value: option.value})));
+    return h(VRadioGroup, commonProps, () => field.options!.map((option) => h(VRadio, {label: option.label, value: option.value})));
   }
-  if (field.type === 'combobox') {
-    return h(VCombobox, {
-      ...commonProps,
-      multiple: !!field.multiple,
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v,
-      items: field.options,
-      itemTitle: 'label',
-      itemValue: 'value',
-      chips: field.multiple === true
-    } as Record<string, any>);
+  if (field.type === 'combobox' || field.type === 'select') {
+    commonProps.items = field.options;
+    commonProps.itemTitle = 'label';
+    commonProps.itemValue = 'value';
+    commonProps.chips = field.multiple === true;
+    return h(field.type === 'combobox' ? VCombobox : VSelect, commonProps);
   }
-  if (field.type === 'select') {
-    return h(VSelect, {
-      ...commonProps,
-      multiple: !!field.multiple,
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v,
-      items: field.options,
-      itemTitle: 'label',
-      itemValue: 'value',
-      chips: field.multiple === true
-    } as Record<string, any>);
+  if (field.type === 'slider') {
+    commonProps['thumb-label'] = true;
+    commonProps.strict = true;
+    commonProps.min = field.min === undefined ? 0 : field.min;
+    commonProps.max = field.max === undefined ? 100 : field.max;
+    if (field.step) {
+      commonProps.step = field.step;
+    }
+    if (field.range) {
+      commonProps['modelValue'] = [data[field.key] || 0, data[field.range] || 0];
+      return h(VRangeSlider, commonProps);
+    }
+    return h(VSlider, commonProps);
   }
-  if (field.type === 'date' || field.type === 'datetime' || (typeof field.type === 'object' && field.type.type === 'date')) {
-    return renderDateField(field, data, editMode);
+  const simpleComponent = simpleFieldComponents[field.type];
+  if (simpleComponent) {
+    return h(simpleComponent, commonProps);
   }
-  if (field.type === 'textarea') {
-    return h(VTextarea, {...commonProps, counter: true, autoGrow: true});
-  }
-  if (field.type === 'file') {
-    return h(VFileInput, {...commonProps, multiple: !!field.multiple});
-  }
-  if (field.type === 'attachment') {
-    return h(AttachmentUploader, {
-      ...commonProps,
-      multiple: !!field.multiple,
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v,
-    });
-  }
-  if (field.type === 'image') {
-    return h(ImageUploader, {
-      ...commonProps,
-      multiple: !!field.multiple,
-      modelValue: data[field.key],
-      'onUpdate:modelValue': v => data[field.key] = v,
-    });
-  }
-  return h(VTextField, {...commonProps});
+  return h(VTextField, commonProps);
 };
 
 const renderLabel = (label: string): VNode => h('div', {class: ['text-subtitle-1', 'text-medium-emphasis']}, label);
 
-const renderFields = (fields: FormField[], data: any, editMode: boolean | undefined): VNode[] => {
+const renderFields = (fields: FormField[], data: any, display: DisplayInstance, editMode: boolean | undefined): VNode[] => {
   const result: VNode[] = [];
   for (let i = 0, len = fields.length; i < len; i++) {
     const field = fields[i];
-    if (!(field.cols === 2 || field.range) && i < len - 1 && fields[i + 1].cols !== 2) {
+    if (!isDoubleCol(field) && i < len - 1 && !isDoubleCol(fields[i + 1])) {
       const nextField = fields[i + 1];
-      result.push(h(VRow, {}, () => [h(VCol, {cols: 6}, () => [renderLabel(field.title), renderField(field, data, editMode)]), h(VCol, {cols: 6}, () => [renderLabel(nextField.title), renderField(nextField, data, editMode)])]))
+      result.push(h(VRow, {}, () => [
+        h(VCol, {cols: display.smAndUp.value ? 6 : 12}, () => [renderLabel(field.title), renderField(field, data, editMode)]),
+        h(VCol, {cols: display.smAndUp.value ? 6 : 12}, () => [renderLabel(nextField.title), renderField(nextField, data, editMode)])
+      ]));
       i++;
       continue;
     }
-    result.push(h(VRow, {}, () => h(VCol, {cols: (field.cols === 2 || field.range) ? 12 : 6}, () => [renderLabel(field.title), renderField(field, data, editMode)])));
+    result.push(h(VRow, {}, () => h(VCol, {cols: !display.smAndUp.value || isDoubleCol(field) ? 12 : 6}, () => [renderLabel(field.title), renderField(field, data, editMode)])));
   }
   return result;
 }
@@ -212,6 +238,7 @@ export default {
     }
   },
   setup(props) {
+    const display = useDisplay();
     const isGrouped = ref(props.meta.length > 0 && props.meta[0].hasOwnProperty('fields'));
     let buildChildren: () => VNode | VNode[];
     if (isGrouped) {
@@ -219,10 +246,10 @@ export default {
         return props.meta.map(group => h(ExpansionCard, {
           title: group.title,
           style: {marginBottom: '2rem'}
-        }, () => h(VCardText, {}, () => renderFields(group.fields, props.data, props.editMode))));
+        }, () => h(VCardText, {}, () => renderFields(group.fields, props.data, display, props.editMode))));
       }
     } else {
-      buildChildren = () => renderFields(props.meta, props.data, props.editMode);
+      buildChildren = () => renderFields(props.meta, props.data, display, props.editMode);
     }
     return () => h(VDefaultsProvider, {defaults: formDefaults} as Record<string, any>, () => h('div', {class: ['auto-form']}, buildChildren()));
   }
