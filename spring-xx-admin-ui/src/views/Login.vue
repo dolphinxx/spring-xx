@@ -18,7 +18,7 @@
             v-model.trim="username"
             :rules="usernameRules"
             placeholder="请输入账号"
-            prepend-inner-icon="mdi-account-outline"
+            prepend-inner-icon="$mdi-account-outline"
             variant="outlined"
             density="compact"
             required
@@ -35,10 +35,10 @@
               忘记密码？</a>
           </div>
           <v-text-field
-            :append-inner-icon="passwordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+            :append-inner-icon="passwordVisible ? '$mdi-eye-off' : '$mdi-eye'"
             :type="passwordVisible ? 'text' : 'password'"
             placeholder="请输入密码"
-            prepend-inner-icon="mdi-lock-outline"
+            prepend-inner-icon="$mdi-lock-outline"
             variant="outlined"
             density="compact"
             @click:append-inner="passwordVisible = !passwordVisible"

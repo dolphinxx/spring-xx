@@ -6,7 +6,6 @@
 <script lang="ts" setup>
 import AutoForm from "@/components/AutoForm.vue";
 import {ref} from "vue";
-
 const meta: FormFieldGroup[] = [
   {
     title: 'Input',
@@ -42,6 +41,28 @@ const meta: FormFieldGroup[] = [
         key: 'fileMultiple',
         title: 'File Multiple',
         type: 'file',
+        multiple: true,
+      },
+      {
+        key: 'attachment',
+        title: 'Attachment',
+        type: 'attachment'
+      },
+      {
+        key: 'attachmentMultiple',
+        title: 'Attachment Multiple',
+        type: 'attachment',
+        multiple: true,
+      },
+      {
+        key: 'image',
+        title: 'Image',
+        type: 'image'
+      },
+      {
+        key: 'imageMultiple',
+        title: 'Image Multiple',
+        type: 'image',
         multiple: true,
       },
     ],
@@ -349,6 +370,8 @@ const data = ref({
   hint: 'admin',
   checkbox: 'value2',
   switch: true,
+  attachment: undefined,
+  attachmentMultiple: [],
   checkboxMultiple: ['value1', 'value3'],
   date: new Date('2000-01-01T01:01:01'),
   dateTime: new Date('2000-01-01T01:01:01'),

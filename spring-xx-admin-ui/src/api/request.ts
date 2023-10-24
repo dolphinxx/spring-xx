@@ -1,3 +1,6 @@
+let loginHandler:() => void;
+// TODO
+export const applyLoginHandler = (handler:() => void) => loginHandler = handler;
 export const request = async <T>(url: string, options?: RequestOptions): Promise<T> => {
   const requestInit = {
     method: options?.method || 'GET',
@@ -25,9 +28,13 @@ export const request = async <T>(url: string, options?: RequestOptions): Promise
         if (res.status === 200) {
           return res.data as T;
         }
-        throw new Error(res.msg);
+        if(res.status === 401 && loginHandler) {
+          loginHandler();
+        }
+        throw new Error(res.msg || 'request failed with status ' + res.status);
       });
     }
+    throw new Error(`failed to perform request ${url}, status=${response.status}`);
   });
 }
 
@@ -51,4 +58,43 @@ export const postJson = async <T>(url: string, body: any, headers?: RequestHeade
     },
     body: JSON.stringify(body),
   })
+}
+
+export const uploadFile = async <T>(url: string, file: File, progressListener?: UploadProgressListener): Promise<T> => {
+  url = `/api${url}`;
+  const xhr = new XMLHttpRequest();
+  return await new Promise((resolve, reject) => {
+    if (progressListener) {
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          progressListener!(event.loaded, event.total);
+        }
+      });
+    }
+    xhr.addEventListener("error", (e) => {
+      reject(new Error(e ? String(e) : "failed to perform xhr"));
+    });
+    xhr.addEventListener("loadend", () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          console.log(xhr.response);
+          const res = JSON.parse(xhr.response);
+          if (res.status === 200) {
+            resolve(res.data as T);
+            return;
+          }
+          if(res.status === 401 && loginHandler) {
+            loginHandler();
+          }
+          reject(new Error(res.msg || 'request failed with status ' + res.status));
+          return;
+        }
+        reject(new Error(`failed to perform request ${url}, status=${xhr.status}`));
+      }
+    });
+    const fileData = new FormData();
+    fileData.append("file", file);
+    xhr.open("POST", url, true);
+    xhr.send(fileData);
+  });
 }

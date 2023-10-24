@@ -1,7 +1,7 @@
 <template>
   <v-text-field v-bind:value="display" v-bind="inputProps" @keydown.prevent="">
     <template v-slot:prepend-inner>
-      <v-icon icon="mdi-calendar"/>
+      <v-icon icon="$mdi-calendar"/>
     </template>
     <v-dialog v-model="dialogState" location-strategy="static" activator="parent" width="auto">
       <vue-date-picker

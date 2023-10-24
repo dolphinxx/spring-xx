@@ -18,15 +18,15 @@
         <template v-slot:append>
           <v-divider></v-divider>
           <div class="logout">
-            <v-list-item @click="handleLogout" title="退出登录" prepend-icon="mdi-power"/>
+            <v-list-item @click="handleLogout" title="退出登录" prepend-icon="$mdi-power"/>
           </div>
         </template>
       </v-navigation-drawer>
       <v-app-bar density="compact" style="position: fixed;">
-        <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? 'mdi-close' : 'mdi-menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon variant="text" :icon="showingDrawer ? '$close' : '$menu'" @click.stop="showingDrawer = !showingDrawer"></v-app-bar-nav-icon>
         <div id="top-navs">
-          <v-btn prepend-icon="mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
-          <v-btn prepend-icon="mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
+          <v-btn prepend-icon="$mdi-home" variant="plain" text="Home" to="/" :exact="true"/>
+          <v-btn prepend-icon="$mdi-home" variant="plain" text="Menus" to="/demo/menus" :exact="true"/>
         </div>
         <v-spacer></v-spacer>
       </v-app-bar>

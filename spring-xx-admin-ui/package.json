@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.21.4",
+    "@mdi/js": "^7.3.67",
     "@types/js-cookie": "^3.0.4",
     "@types/node": "^18.15.0",
     "@vitejs/plugin-vue": "^4.0.0",

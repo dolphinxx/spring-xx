@@ -1,6 +1,6 @@
 type Override<T1, T2> = Omit<T1, keyof T2> & T2;
 
-type StringConverter = (v:any) => string;
+type StringConverter = (v: any) => string;
 
 type R<T> = {
   data: T;
@@ -12,11 +12,11 @@ type Page<T> = {
   /**
    * the first page is 1.
    */
-  page:number;
-  size:number;
-  totalCount:number;
-  totalPages:number;
-  items:T[];
+  page: number;
+  size: number;
+  totalCount: number;
+  totalPages: number;
+  items: T[];
 }
 
 type RequestHeaders = {
@@ -25,9 +25,9 @@ type RequestHeaders = {
 };
 
 type RequestOptions = ({
-  method?: "GET"|"POST";
+  method?: "GET" | "POST";
   headers?: RequestHeaders;
-  query?:Record<string, any>;
+  query?: Record<string, any>;
   body?: BodyInit | null;
 });
 
@@ -72,5 +72,13 @@ type Btn = {
   icon?: string | null;
   order: number;
   children?: Array<Btn> | null;
-  active?:boolean;
+  active?: boolean;
+}
+
+declare global {
+  interface Window {
+    __APP__: {
+      storagePrefix: string;
+    }
+  }
 }

@@ -1,3 +1,11 @@
+let increment = 0;
+export const nextId = (): string => {
+  if (increment > 990) {
+    increment = 0;
+  }
+  return new Date().getTime() + '' + (increment++).toString().padStart(3, '0');
+}
+
 export const snakeToPascalCase = (input: string): string => {
   let capitalizeNext = true;
   let result = '';

@@ -90,6 +90,9 @@ export const useAppStore = defineStore('app', {
 
         function addRoutes(list) {
           list.forEach(m => {
+            if(m.icon) {
+              m.icon = '$' + m.icon;
+            }
             if (m.target) {
               // create route from the menu target
               router.addRoute('Authenticated', {path: m.target, name: m.name, component: () => importDynamic(m.target)})

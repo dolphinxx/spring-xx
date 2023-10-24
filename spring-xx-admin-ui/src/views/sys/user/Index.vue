@@ -39,7 +39,7 @@
           <template v-slot:activator="{props}">
             <v-btn
               v-bind="props"
-              icon="mdi-eye"
+              icon="$mdi-eye"
               size="small"
               variant="text"
               @click="readItem(item)"
@@ -50,7 +50,7 @@
           <template v-slot:activator="{props}">
             <v-btn
               v-bind="props"
-              icon="mdi-pencil"
+              icon="$mdi-pencil"
               size="small"
               variant="text"
               @click="editItem(item)"
@@ -61,7 +61,7 @@
           <template v-slot:activator="{props}">
             <v-btn
               v-bind="props"
-              icon="mdi-delete"
+              icon="$mdi-delete"
               size="small"
               variant="text"
               @click="deleteItem(item)"

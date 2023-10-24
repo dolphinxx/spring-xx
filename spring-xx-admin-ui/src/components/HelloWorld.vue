@@ -19,7 +19,7 @@
             variant="text"
           >
             <v-icon
-              icon="mdi-view-dashboard"
+              icon="$mdi-view-dashboard"
               size="large"
               start
             />
@@ -39,7 +39,7 @@
             variant="flat"
           >
             <v-icon
-              icon="mdi-speedometer"
+              icon="$mdi-speedometer"
               size="large"
               start
             />
@@ -57,7 +57,7 @@
             variant="text"
           >
             <v-icon
-              icon="mdi-account-group"
+              icon="$mdi-account-group"
               size="large"
               start
             />

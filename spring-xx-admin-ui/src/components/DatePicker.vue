@@ -29,7 +29,7 @@
         v-bind="inputProps"
       >
         <template v-slot:prepend-inner>
-          <v-icon icon="mdi-calendar"/>
+          <v-icon icon="$mdi-calendar"/>
         </template>
       </v-text-field>
     </template>

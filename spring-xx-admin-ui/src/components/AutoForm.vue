@@ -3,6 +3,8 @@ import {h, ref} from "vue";
 import type {VNode} from "vue";
 import ExpansionCard from "@/components/ExpansionCard.vue";
 import DatePicker from "@/components/DatePicker.vue";
+import AttachmentUploader from "@/components/form/AttachmentUploader.vue";
+import ImageUploader from "@/components/form/ImageUploader.vue";
 import {
   VCardText,
   VCheckbox,
@@ -92,6 +94,9 @@ function renderDateField(field: FormField, data: any, editMode: boolean | undefi
 }
 
 const renderField = (field: FormField, data: any, editMode: boolean | undefined): VNode => {
+  if (field.render) {
+    return field.render(field, data, editMode);
+  }
   if (editMode) {
 
   }
@@ -122,7 +127,7 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
       'onUpdate:modelValue': v => data[field.key] = v
     }, () => field.options!.map((option) => h(VRadio, {label: option.label, value: option.value})));
   }
-  if(field.type === 'combobox') {
+  if (field.type === 'combobox') {
     return h(VCombobox, {
       ...commonProps,
       multiple: !!field.multiple,
@@ -134,7 +139,7 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
       chips: field.multiple === true
     } as Record<string, any>);
   }
-  if(field.type === 'select') {
+  if (field.type === 'select') {
     return h(VSelect, {
       ...commonProps,
       multiple: !!field.multiple,
@@ -149,11 +154,27 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
   if (field.type === 'date' || field.type === 'datetime' || (typeof field.type === 'object' && field.type.type === 'date')) {
     return renderDateField(field, data, editMode);
   }
-  if(field.type === 'textarea') {
+  if (field.type === 'textarea') {
     return h(VTextarea, {...commonProps, counter: true, autoGrow: true});
   }
-  if(field.type === 'file') {
+  if (field.type === 'file') {
     return h(VFileInput, {...commonProps, multiple: !!field.multiple});
+  }
+  if (field.type === 'attachment') {
+    return h(AttachmentUploader, {
+      ...commonProps,
+      multiple: !!field.multiple,
+      modelValue: data[field.key],
+      'onUpdate:modelValue': v => data[field.key] = v,
+    });
+  }
+  if (field.type === 'image') {
+    return h(ImageUploader, {
+      ...commonProps,
+      multiple: !!field.multiple,
+      modelValue: data[field.key],
+      'onUpdate:modelValue': v => data[field.key] = v,
+    });
   }
   return h(VTextField, {...commonProps});
 };

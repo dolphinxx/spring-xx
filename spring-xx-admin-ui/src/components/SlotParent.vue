@@ -13,7 +13,7 @@
       <template #activator="{props}">
         <v-list-item
           v-bind="props"
-          prepend-icon="mdi-account-circle"
+          prepend-icon="$mdi-account-circle"
           title="Users"
         ></v-list-item>
       </template>
@@ -46,7 +46,7 @@ const renderList = () => {
   return h(VListGroup, {}, {
     activator: (slotProps) => {
       console.log('slotProps', slotProps);
-      return h(VListItem, {title: 'Users', 'prepend-icon': 'mdi-account-circle', ...slotProps.props});
+      return h(VListItem, {title: 'Users', 'prepend-icon': '$mdi-account-circle', ...slotProps.props});
     },
     default: () => h(VListItem, {title: 'Inner Item'})
   })
