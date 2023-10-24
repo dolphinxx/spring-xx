@@ -1,5 +1,5 @@
 <script lang="ts">
-import {h, ref, unref} from "vue";
+import {h, ref} from "vue";
 import type {VNode, Component} from "vue";
 import ExpansionCard from "@/components/ExpansionCard.vue";
 import DatePicker from "@/components/DatePicker.vue";
@@ -102,7 +102,7 @@ function isDoubleCol(field: FormField): boolean {
 function renderDateField(field: FormField, data: any, editMode: boolean | undefined) {
   const type: FieldDateType = typeof field.type === 'object' ? field.type : {type: 'date', subtype: field.type || 'datetime'} as FieldDateType;
   const dpProps: Record<string, any> = {};
-  const inputProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint};
+  const inputProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint, rules: field.rules};
   const isRange = field.range;
   const fmt = field.format || defaultDateFormats[type.subtype];
   if (type.subtype === 'date') {
@@ -149,21 +149,22 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
   if (field.type === 'date' || field.type === 'datetime' || (typeof field.type === 'object' && field.type.type === 'date')) {
     return renderDateField(field, data, editMode);
   }
-  const commonProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint, clearable: true};
+  const commonProps: Record<string, any> = {placeholder: field.placeholder, name: field.key, hint: field.hint, clearable: true, rules: field.rules};
   if (field.range) {
-    commonProps['modelValue'] = [data[field.key], data[field.range]].filter(v => v !== undefined);
+    commonProps['modelValue'] = [data[field.key], data[field.range]].filter(v => hasValue(v));
     commonProps['onUpdate:modelValue'] = v => {
       data[field.key] = v[0];
       data[field.range] = v[1];
     };
   } else {
-    commonProps['modelValue'] = field.multiple && data[field.key] === undefined ? [] : data[field.key];
+    commonProps['modelValue'] = field.multiple && !hasValue(data[field.key]) ? [] : data[field.key];
     commonProps['onUpdate:modelValue'] = v => data[field.key] = v;
   }
   if (!!field.multiple) {
     commonProps['multiple'] = true;
   }
   if (field.type === 'checkbox') {
+    delete commonProps.name;
     return h('div', {}, field.options!.map((option, i, array) => h(VCheckbox, {
       ...commonProps,
       label: option.label,
@@ -172,6 +173,7 @@ const renderField = (field: FormField, data: any, editMode: boolean | undefined)
     })));
   }
   if (field.type === 'radio') {
+    delete commonProps.name;
     return h(VRadioGroup, commonProps, () => field.options!.map((option) => h(VRadio, {label: option.label, value: option.value})));
   }
   if (field.type === 'combobox' || field.type === 'select') {

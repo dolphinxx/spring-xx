@@ -1,3 +1,8 @@
+// copied from vuetify
+type ValidationResult = string | boolean;
+type ValidationRule = ValidationResult | PromiseLike<ValidationResult> | ((value: any) => ValidationResult) | ((value: any) => PromiseLike<ValidationResult>);
+
+
 type UploadedFile = {
   key:string;
   url?:string;
@@ -47,6 +52,7 @@ type FormField = {
   cols?: 1 | 2;
   render?: (field: FormField, data: any, editMode?: boolean) => any;
   uploadHandler?:FileUploadHandler;
+  rules?: ValidationRule[];
 }
 type FormFieldGroup = {
   title: string;

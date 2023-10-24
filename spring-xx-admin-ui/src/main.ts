@@ -19,6 +19,7 @@ import {LocalizationKey} from "@/symbols";
 window.__APP__ = {
   storagePrefix: import.meta.env.VITE_STORAGE_PREFIX,
 };
+globalThis.hasValue = (v:any) => v !== undefined && v !== null;
 
 const app = createApp(App)
 

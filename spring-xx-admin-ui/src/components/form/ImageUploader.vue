@@ -22,7 +22,7 @@
         </v-hover>
       </template>
     </div>
-    <v-input v-model="value" v-bind="$props"/>
+    <v-input v-model="value" v-bind="$attrs"/>
   </div>
 </template>
 <script lang="ts" setup>

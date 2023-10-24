@@ -79,6 +79,7 @@ declare global {
   interface Window {
     __APP__: {
       storagePrefix: string;
-    }
+    };
   }
 }
+declare var hasValue: (v: any) => boolean;

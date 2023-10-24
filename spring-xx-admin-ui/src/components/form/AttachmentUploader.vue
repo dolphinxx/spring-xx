@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-input v-model="value" v-bind="$props">
+    <v-input v-model="value" v-bind="$attrs">
       <div>
         <v-btn :prepend-icon="multiple ? '$mdi-upload-multiple' : '$mdi-upload'" text="点击上传" variant="flat" color="primary" @click="fileInput.click()"/>
         <input ref="fileInput" type="file" :multiple="!!multiple" style="display:none;" @change="handleFiles">

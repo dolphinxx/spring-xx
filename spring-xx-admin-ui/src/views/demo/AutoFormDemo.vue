@@ -1,11 +1,28 @@
 <template>
   <v-container>
-    <auto-form :meta="meta" :data="data"/>
+    <v-form ref="formRef" validate-on="blur">
+      <auto-form :meta="meta" :data="data"/>
+      <div style="position: fixed;bottom: 0;">
+        <v-btn text="提交" @click="submitForm"/>
+        <v-btn text="重置" @click="resetForm"/>
+      </div>
+    </v-form>
   </v-container>
 </template>
 <script lang="ts" setup>
 import AutoForm from "@/components/AutoForm.vue";
-import {ref} from "vue";
+import {ref, toRaw} from "vue";
+import {requiredRule, nonEmptyRule} from "@/utils/validation";
+
+const formRef = ref<VFormRef>();
+const submitForm = () => {
+  formRef.value?.validate();
+};
+const resetForm = () => {
+  formRef.value?.resetValidation();
+  formRef.value?.reset();
+  console.log(toRaw(data.value));
+};
 
 const meta: FormFieldGroup[] = [
   {
@@ -24,6 +41,7 @@ const meta: FormFieldGroup[] = [
         key: 'hint',
         title: 'Hint',
         hint: 'input hint',
+        rules: [requiredRule],
       },
       {
         key: 'textarea',
@@ -32,6 +50,7 @@ const meta: FormFieldGroup[] = [
         hint: 'input hint',
         placeholder: 'Placeholder',
         cols: 2,
+        rules: [requiredRule],
       },
       {
         key: 'file',
@@ -54,17 +73,20 @@ const meta: FormFieldGroup[] = [
         title: 'Attachment Multiple',
         type: 'attachment',
         multiple: true,
+        rules: [nonEmptyRule],
       },
       {
         key: 'image',
         title: 'Image',
-        type: 'image'
+        type: 'image',
+        rules: [requiredRule],
       },
       {
         key: 'imageMultiple',
         title: 'Image Multiple',
         type: 'image',
         multiple: true,
+        rules: [nonEmptyRule],
       },
     ],
   },
@@ -75,6 +97,7 @@ const meta: FormFieldGroup[] = [
         key: 'checkbox',
         title: 'Checkbox',
         type: 'checkbox',
+        rules: [requiredRule],
         options: [
           {
             label: 'Label1',
@@ -187,6 +210,7 @@ const meta: FormFieldGroup[] = [
         key: 'switch2',
         title: 'Switch',
         type: 'switch',
+        rules: [requiredRule],
       },
     ],
   },
@@ -204,10 +228,11 @@ const meta: FormFieldGroup[] = [
         type: 'slider',
       },
       {
-        key: 'slider',
+        key: 'slider3',
         title: 'Slider',
         type: 'slider',
         step: 5,
+        rules: [requiredRule],
       },
       {
         key: 'sliderStart',
@@ -354,6 +379,7 @@ const meta: FormFieldGroup[] = [
         key: 'year1',
         title: 'Year',
         type: {type: 'date', subtype: 'year'},
+        rules: [requiredRule],
       },
       {
         key: 'month',
@@ -393,7 +419,8 @@ const meta: FormFieldGroup[] = [
         key: 'startMonth',
         title: 'Month区间',
         type: {type: 'date', subtype: 'month'},
-        range: 'endMonth'
+        range: 'endMonth',
+        rules: [requiredRule],
       },
     ],
   }
