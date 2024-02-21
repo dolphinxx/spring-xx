@@ -1,0 +1,21 @@
+{
+  "totalCount": 1,
+  "totalPages": 1,
+  "page": 1,
+  "size": 25,
+  "items": [
+      {
+          "id": 1,
+          "status": 1,
+          "remark": "",
+          "createTime": "2023-10-12T00:07:52",
+          "updateTime": "2023-10-12T00:07:52",
+          "creatorId": null,
+          "lastModifierId": null,
+          "lastModifyTime": null,
+          "name": "admin",
+          "username": "admin",
+          "password": "******"
+      }
+  ]
+}

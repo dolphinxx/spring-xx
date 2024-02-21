@@ -1,0 +1,46 @@
+@charset "utf-8";
+
+// import dark theme
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+body {
+  font-family: Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+a {
+  color: var(--ep-color-primary);
+}
+
+.app {
+  // background-color: #f0f2f5;
+}
+
+.el-container.app-container {
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
+  background: var(--el-bg-color-page);
+}
+
+.view-container {
+  background-color: var(--el-bg-color);
+  & > .el-card {
+    box-shadow: none !important;
+    border: none;
+  }
+}
+
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-success {
+  color: var(--el-color-success)
+}

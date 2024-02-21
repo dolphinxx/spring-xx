@@ -1,0 +1,8 @@
+{
+  "name": "XX管理系统",
+  "uploaded": {
+    "endpoint": "/api/storage/upload",
+    "prefix": "/api/static/tmp/",
+    "sendRemoval": true
+  }
+}

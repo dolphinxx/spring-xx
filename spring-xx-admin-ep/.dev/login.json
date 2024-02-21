@@ -1,0 +1,20 @@
+{
+  "username": "admin",
+  "authorities": [
+      {
+          "raw": "*",
+          "perm": {
+              "domain": "*",
+              "actions": "*",
+              "targets": "*"
+          },
+          "authority": "PERM_All"
+      },
+      {
+          "role": "admin",
+          "authority": "ROLE_admin"
+      }
+  ],
+  "id": 1,
+  "name": "admin"
+}

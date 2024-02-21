@@ -1,0 +1,75 @@
+{
+  "%dest%": "paginate.{page}.json",
+  "%paginate%": {
+    "totalCount": 55,
+    "size": 10,
+    "items": "items",
+    "scheme": {
+      "id": {
+        "type": "string.uuid"
+      },
+      "status": {
+        "type": "helpers.arrayElement",
+        "arguments": [0, 1]
+      },
+      "remark": {
+        "type": "hacker.phrase"
+      },
+      "createTime": {
+        "type": "date.past",
+        "arguments": {
+          "refDate": "$$now"
+        }
+      },
+      "updateTime": {
+        "type": "date.between",
+        "nullable": true,
+        "arguments": {
+          "from": "$createTime",
+          "to": "$$now"
+        }
+      },
+      "creatorId": {
+        "type": "string.uuid",
+        "nullable": true
+      },
+      "lastModifierId": {
+        "type": "string.uuid",
+        "nullable": true
+      },
+      "lastModifyTime": {
+        "type": "date.between",
+        "nullable": true,
+        "arguments": {
+          "from": "$createTime",
+          "to": "$$now"
+        }
+      },
+      "name": {
+        "type": "person.fullName"
+      },
+      "username": {
+        "type": "internet.userName"
+      },
+      "password": {
+        "type": "internet.password"
+      }
+    }
+  },
+  "totalCount": {
+    "type": "var",
+    "ref": "$$totalCount"
+  },
+  "totalPages": {
+    "type": "var",
+    "ref": "$$totalPages"
+  },
+  "page": {
+    "type": "var",
+    "ref": "$$page"
+  },
+  "size": {
+    "type": "var",
+    "ref": "$$size"
+  }
+}

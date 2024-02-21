@@ -1,0 +1,51 @@
+{
+  "id": {
+    "type": "string.uuid"
+  },
+  "name": {
+    "type": "person.fullName"
+  },
+  "username": {
+    "type": "internet.userName"
+  },
+  "password": {
+    "type": "internet.password"
+  },
+  "status": {
+    "type": "helpers.arrayElement",
+    "arguments": [0, 1]
+  },
+  "remark": {
+    "type": "hacker.phrase"
+  },
+  "createTime": {
+    "type": "date.past",
+    "arguments": {
+      "refDate": "$$now"
+    }
+  },
+  "updateTime": {
+    "type": "date.between",
+    "nullable": true,
+    "arguments": {
+      "from": "$createTime",
+      "to": "$$now"
+    }
+  },
+  "creatorId": {
+    "type": "string.uuid",
+    "nullable": true
+  },
+  "lastModifierId": {
+    "type": "string.uuid",
+    "nullable": true
+  },
+  "lastModifyTime": {
+    "type": "date.between",
+    "nullable": true,
+    "arguments": {
+      "from": "$createTime",
+      "to": "$$now"
+    }
+  }
+}

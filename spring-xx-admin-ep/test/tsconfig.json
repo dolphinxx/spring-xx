@@ -1,0 +1,4 @@
+{
+  "types": ["vitest/globals"],
+  "references": [{ "path": "../tsconfig.json" }]
+}

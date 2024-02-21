@@ -1,0 +1,22 @@
+{
+  "name": "spring-xx-admin-ep-dev",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node server.js",
+    "generate": "node generate.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.3",
+    "file-system-cache": "^2.4.4",
+    "sqlite3": "^5.1.7",
+    "uuid": "^9.0.1"
+  }
+}
