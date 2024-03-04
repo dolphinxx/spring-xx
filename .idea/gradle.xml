@@ -10,7 +10,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/spring-xx-admin" />
             <option value="$PROJECT_DIR$/spring-xx-core" />
+            <option value="$PROJECT_DIR$/spring-xx-devtools" />
+            <option value="$PROJECT_DIR$/spring-xx-sample" />
+            <option value="$PROJECT_DIR$/spring-xx-tests" />
           </set>
         </option>
       </GradleProjectSettings>

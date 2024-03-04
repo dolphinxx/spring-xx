@@ -33,7 +33,7 @@ export default {
     },
   },
   setup(props) {
-    const opened = ref(['3;']);
+    const opened = ref([]);
 
     function renderMenu(list: Btn[], parentValue?: string) {
       if (!list) {

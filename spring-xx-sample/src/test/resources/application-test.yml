@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: TRACE
+debug: true

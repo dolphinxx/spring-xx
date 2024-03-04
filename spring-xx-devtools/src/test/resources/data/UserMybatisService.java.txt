@@ -1,0 +1,7 @@
+package com.example.foo.modules.system.service;
+
+import com.example.common.BaseMybatisService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserMybatisService extends BaseMybatisService<User, Long> implements UserService {}

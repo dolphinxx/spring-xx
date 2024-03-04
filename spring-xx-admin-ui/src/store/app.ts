@@ -3,13 +3,15 @@ import {defineStore} from 'pinia'
 import {getButtons, getSettings} from "@/api/common";
 import type {Router} from "vue-router";
 import {importDynamic} from "@/utils/internal";
+import demoMenus from "@/demo";
 
 export const useAppStore = defineStore('app', {
   state: () => ({
     principal: null,
     settings: {},
     menus: null,
-  } as { principal: Principal | null; settings: Settings; menus: Array<Btn> | null }),
+    showingLogin: false,
+  } as { principal: Principal | null; settings: Settings; menus: Array<Btn> | null; showingLogin: boolean; }),
   actions: {
     async loadSettings() {
       return getSettings().then(r => {
@@ -50,47 +52,14 @@ export const useAppStore = defineStore('app', {
         }
 
         sort(menus);
-        if (import.meta.env.DEV) {
-          menus.push({
-            id: 10000,
-            name: 'Demo',
-            key: 'demo',
-            type: 1,
-            parentId: null,
-            order: 10000,
-            target: null,
-            icon: 'mdi-apps',
-            children: [
-              {
-                id: 10001,
-                name: 'MenusDemo',
-                key: 'menu-demo',
-                type: 1,
-                parentId: null,
-                order: 1,
-                icon: 'mdi-menu',
-                target: '/demo/menu_demo',
-              },
-              {
-                id: 10002,
-                name: 'AutoFormDemo',
-                key: 'auto-form-demo',
-                type: 1,
-                parentId: null,
-                order: 2,
-                icon: 'mdi-menu',
-                target: '/demo/auto_form_demo',
-              },
-            ]
-          })
-        }
+        menus.push(...demoMenus);
 
         let isCurrentRouteDynamic = false;
         const currentRoute = router.currentRoute.value.path;
 
         function addRoutes(list) {
           list.forEach(m => {
-            if(m.icon) {
+            if (m.icon) {
               m.icon = '$' + m.icon;
             }
             if (m.target) {
@@ -117,6 +86,9 @@ export const useAppStore = defineStore('app', {
     },
     setPrincipal(principal: Principal | null) {
       this.$state.principal = principal;
+    },
+    toggleLoginDialog(showing: boolean) {
+      this.$state.showingLogin = showing;
     }
   },
 })

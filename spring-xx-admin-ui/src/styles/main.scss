@@ -14,6 +14,45 @@
 //  background-color: rgba(var(--v-border-color), var(--v-border-opacity));
 //}
 
+.hide-details .v-input__details {
+  display: none;
+}
+
+.compact-form {
+  $field-height: 32px;
+  .v-input {
+    height: $field-height;
+
+    .v-input__control {
+      height: $field-height;
+    }
+
+    .v-field {
+      .v-field__outline {
+        --v-field-border-width: 1px;
+      }
+
+      .v-field__input {
+        padding: 0 0.5em;
+        min-height: auto;
+      }
+
+      .v-select__selection {
+        margin: 0;
+        height: $field-height;
+      }
+
+      input {
+        height: $field-height;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin: 0;
+        min-height: auto;
+      }
+    }
+  }
+}
+
 .side-menu {
   .v-list-item__prepend > .v-icon {
     font-size: 1em;

@@ -1,6 +1,39 @@
-let loginHandler:() => void;
-// TODO
-export const applyLoginHandler = (handler:() => void) => loginHandler = handler;
+import {isPlainObject} from "@/utils";
+
+let loginDelegate: () => void;
+export const setLoginDelegate = (delegate: () => void) => loginDelegate = delegate;
+
+const serializeParams = (params: Record<string, any>): string => {
+  const result = new URLSearchParams();
+  for (let o in params) {
+    if (o.hasOwnProperty(o)) {
+      const v = params[o];
+      if (isPlainObject(v)) {
+        for (let oo in v) {
+          if (v.hasOwnProperty(oo)) {
+            result.append(`${o}.${oo}`, String(v[oo]));
+          }
+        }
+        continue;
+      }
+      if (v instanceof Array) {
+        for (let vv of v) {
+          if (isPlainObject(vv)) {
+            for (let oo in vv) {
+              if (vv.hasOwnProperty(oo)) {
+                result.append(`${o}.${oo}`, String(vv[oo]));
+              }
+            }
+            continue;
+          }
+          result.append(o, String(v));
+        }
+      }
+    }
+  }
+  return result.toString();
+};
+
 export const request = async <T>(url: string, options?: RequestOptions): Promise<T> => {
   const requestInit = {
     method: options?.method || 'GET',
@@ -14,7 +47,7 @@ export const request = async <T>(url: string, options?: RequestOptions): Promise
   }
   url = `/api${url}`;
   if (requestInit.method === 'GET' && options?.query) {
-    const queryString = new URLSearchParams(options.query).toString();
+    const queryString = serializeParams(options.query);
     if (url.indexOf('?') === -1) {
       url = url + '?' + queryString;
     } else {
@@ -28,8 +61,8 @@ export const request = async <T>(url: string, options?: RequestOptions): Promise
         if (res.status === 200) {
           return res.data as T;
         }
-        if(res.status === 401 && loginHandler) {
-          loginHandler();
+        if (res.status === 401 && loginDelegate) {
+          loginDelegate();
         }
         throw new Error(res.msg || 'request failed with status ' + res.status);
       });
@@ -45,7 +78,7 @@ export const postForm = async <T>(url: string, body?: Record<string, any> | null
       ...headers,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: body ? new URLSearchParams(body).toString() : null,
+    body: body ? serializeParams(body) : null,
   });
 }
 
@@ -83,8 +116,8 @@ export const uploadFile = async <T>(url: string, file: File, progressListener?: 
             resolve(res.data as T);
             return;
           }
-          if(res.status === 401 && loginHandler) {
-            loginHandler();
+          if (res.status === 401 && loginDelegate) {
+            loginDelegate();
           }
           reject(new Error(res.msg || 'request failed with status ' + res.status));
           return;

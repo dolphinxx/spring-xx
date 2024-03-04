@@ -10,7 +10,7 @@ export const login = async (username: string, password: string, rememberMe: bool
     body: new URLSearchParams({
       username,
       password,
-      'remember-me': rememberMe
+      'remember-me': rememberMe + ''
     }).toString()
   });
 }

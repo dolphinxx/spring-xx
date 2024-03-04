@@ -20,5 +20,7 @@ buildscript {
 rootProject.name = 'spring-xx'
 include 'spring-xx-core'
 include 'spring-xx-admin'
+include 'spring-xx-devtools'
+include 'spring-xx-sample'
 include 'spring-xx-tests'
 

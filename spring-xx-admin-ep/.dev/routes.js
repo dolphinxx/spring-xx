@@ -127,6 +127,8 @@ function useRoutes(entries, app) {
             }
         });
     }
+
+    app.post('/')
 }
 
 module.exports = useRoutes;

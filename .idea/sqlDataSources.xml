@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DdlMappings">
-    <mapping uuid="dd6650c5-48e9-4aff-b5fb-a755a042d3dc" name="DDL Mapping">
-      <data-sources ddl="8719f3c4-23c5-4eac-b509-02495ad38cf7" />
+    <mapping uuid="dd6650c5-48e9-4aff-b5fb-a755a042d3dc" name="spring-xx-sample Mapping">
+      <data-sources db="4ac35df5-55f8-4f5d-b0b1-7ba7a345d4f0" ddl="8719f3c4-23c5-4eac-b509-02495ad38cf7" />
+      <scope>
+        <node kind="schema" qname="xx-sample" />
+      </scope>
+    </mapping>
+    <mapping uuid="022789f6-389f-43f4-b241-2339679a3d65" name="spring-xx-admin Mapping">
+      <data-sources db="f8fd6d27-9dd7-4810-94da-715a776c8057" ddl="6a4537d3-60ae-45ac-a84c-196d8bed02db" />
+      <scope>
+        <node kind="schema" qname="xx" />
+      </scope>
     </mapping>
   </component>
   <component name="SqlDataSourceStorage">
@@ -10,12 +19,27 @@
       <list>
         <State>
           <option name="id" value="8719f3c4-23c5-4eac-b509-02495ad38cf7" />
-          <option name="name" value="DDL Mapping (DDL)" />
+          <option name="name" value="spring-xx-sample" />
           <option name="languageId" value="MySQL" />
           <option name="urls">
             <array>
               <option value="file://$PROJECT_DIR$/spring-xx-core/src/test/resources/schema.sql" />
             </array>
+          </option>
+        </State>
+        <State>
+          <option name="id" value="6a4537d3-60ae-45ac-a84c-196d8bed02db" />
+          <option name="name" value="spring-xx-admin" />
+          <option name="languageId" value="MySQL" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/spring-xx-admin/src/main/resources/init/schema.sql" />
+            </array>
+          </option>
+          <option name="scopes">
+            <map>
+              <entry key="$PROJECT_DIR$/spring-xx-admin/src/test/resources" value="xx" />
+            </map>
           </option>
         </State>
       </list>

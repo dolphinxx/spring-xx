@@ -82,4 +82,4 @@ declare global {
     };
   }
 }
-declare var hasValue: (v: any) => boolean;
+declare const hasValue: (v: any) => boolean;

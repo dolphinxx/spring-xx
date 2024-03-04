@@ -16,16 +16,17 @@ import {
   mdiChevronUp,
   mdiClose, mdiCodeJson,
   mdiCogOutline,
-  mdiConsole, mdiEye, mdiEyeOff, mdiGestureTapButton,
+  mdiConsole, mdiDelete, mdiDeleteOutline, mdiEye, mdiEyeOff, mdiGestureTapButton,
   mdiHome, mdiLockOutline,
-  mdiMenu, mdiMessageQuestion, mdiPaperclip,
+  mdiMenu, mdiMessageQuestion, mdiPaperclip, mdiPen, mdiPencil,
   mdiPlus,
-  mdiPower, mdiShieldLockOutline, mdiSpeedometer, mdiUpload, mdiUploadMultiple, mdiViewDashboard
+  mdiPower, mdiReload, mdiShieldLockOutline, mdiSpeedometer, mdiUpload, mdiUploadMultiple, mdiViewDashboard
 } from '@mdi/js';
 
 // Composables
 import {createVuetify} from 'vuetify'
 import type {IconSet} from 'vuetify'
+import { pl, zhHans } from 'vuetify/locale'
 
 import {
   VDataTable,
@@ -59,6 +60,11 @@ const extraIconAlias: Record<string, string> = {
   ['mdi-close']: mdiClose,
   ['mdi-account-outline']: mdiAccountOutline,
   ['mdi-account-multiple-outline']: mdiAccountMultipleOutline,
+  ['mdi-pen']: mdiPen,
+  ['mdi-pencil']: mdiPencil,
+  ['mdi-delete']: mdiDelete,
+  ['mdi-delete-outline']: mdiDeleteOutline,
+  ['mdi-reload']: mdiReload,
 
   ['mdi-account-group']: mdiAccountGroup,
   ['mdi-view-dashboard']: mdiViewDashboard,
@@ -91,5 +97,9 @@ export default createVuetify({
     sets: {
       mdi,
     } as Record<string, IconSet>,
+  },
+  locale: {
+    locale: 'zhHans',
+    messages: { zhHans, pl },
   },
 })

@@ -22,3 +22,20 @@ export const snakeToPascalCase = (input: string): string => {
   }
   return result;
 }
+
+export const isPlainObject = (obj:any) => obj.constructor === Object && Object.getPrototypeOf(obj) === Object.prototype;
+
+export const delay = <T>(
+  fn: () => T | Promise<T>,
+  timeout: number
+): Promise<T> => {
+  return new Promise<T>((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(fn());
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+};

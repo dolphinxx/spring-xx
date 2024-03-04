@@ -1,0 +1,28 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation project(":spring-xx-core")
+    implementation "org.mybatis.generator:mybatis-generator-core:1.4.2"
+    implementation "commons-io:commons-io:2.14.0"
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-freemarker"
+    implementation 'com.google.googlejavaformat:google-java-format:1.7'
+    compileOnly "org.projectlombok:lombok"
+//    implementation "com.vaadin:open:8.5.0"
+    annotationProcessor "org.projectlombok:lombok"
+    testImplementation project(":spring-xx-tests")
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}

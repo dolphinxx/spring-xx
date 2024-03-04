@@ -1,0 +1,29 @@
+package com.example.foo.modules.system.entity;
+
+import com.example.common.BaseEntity;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class User extends BaseEntity {
+  private Long id;
+
+  private String name;
+
+  private String username;
+
+  private String password;
+
+  private LocalDate birth;
+
+  private Integer status;
+
+  private String remark;
+
+  private LocalDateTime createTime;
+
+  private LocalDateTime updateTime;
+}

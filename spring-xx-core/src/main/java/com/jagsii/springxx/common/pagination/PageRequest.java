@@ -13,8 +13,8 @@ public class PageRequest {
     /**
      * 1 based
      */
-    private int page;
-    private int size;
+    private int page = 1;
+    private int size = 25;
 
     public int getOffset() {
         return (page - 1) * size;

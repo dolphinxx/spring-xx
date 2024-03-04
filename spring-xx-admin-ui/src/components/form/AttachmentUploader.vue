@@ -2,7 +2,7 @@
   <div>
     <v-input v-model="value" v-bind="$attrs">
       <div>
-        <v-btn :prepend-icon="multiple ? '$mdi-upload-multiple' : '$mdi-upload'" text="点击上传" variant="flat" color="primary" @click="fileInput.click()"/>
+        <v-btn :prepend-icon="multiple ? '$mdi-upload-multiple' : '$mdi-upload'" text="点击上传" variant="flat" color="primary" @click="fileInput?.click()"/>
         <input ref="fileInput" type="file" :multiple="!!multiple" style="display:none;" @change="handleFiles">
       </div>
     </v-input>
@@ -35,7 +35,7 @@
 </template>
 <script lang="ts" setup>
 import {computed, ref} from "vue";
-import {uploadHandler} from "@/api/common";
+import {uploadHandler as defaultUploadHandler} from "@/api/common";
 import {nextId} from "@/utils";
 
 type PropsType = ({
@@ -65,20 +65,21 @@ const value = computed<string | string[] | undefined>({
     emit("update:modelValue", val);
   }
 });
-const handleFiles = async (e) => {
-  const files = e.target.files;
+const handleFiles = async (e:Event) => {
+  const files = (e.target as HTMLInputElement).files;
   if (!files || files.length === 0) {
     return;
   }
   if (props.multiple) {
-    for (const file of files) {
+    for (let i = 0;i < files.length;i++) {
+      const file = files[i];
       const task: UploadTask = {
         id: nextId(),
         name: file.name,
         progress: 0,
       };
       items.value.push(task);
-      (props.uploadHandler || uploadHandler).upload(file, (loaded, total) => loaded / total).then(r => {
+      (props.uploadHandler || defaultUploadHandler).upload(file, (loaded, total) => loaded / total).then(r => {
         items.value[items.value.findIndex(_ => typeof _ === 'object' && _.id === task.id)] = r.key;
         flushTasks();
       }).catch(e => {
@@ -94,14 +95,14 @@ const handleFiles = async (e) => {
     };
     console.log(task);
     items.value[0] = task;
-    (props.uploadHandler || uploadHandler).upload(file, (loaded, total) => loaded / total).then(r => {
+    (props.uploadHandler || defaultUploadHandler).upload(file, (loaded, total) => loaded / total).then(r => {
       items.value[items.value.findIndex(_ => typeof _ === 'object' && _.id === task.id)] = r.key;
       flushTasks();
     }).catch(e => {
       task.error = String(e) || 'failed';
     });
   }
-  e.target.value = null;
+  (e.target as HTMLInputElement).value = '';
 }
 const flushTasks = () => {
   if (items.value.every(_ => typeof _ === 'string')) {
@@ -115,7 +116,7 @@ const flushTasks = () => {
 const removeItem = (key: string | UploadTask) => {
   items.value.splice(items.value.indexOf(key), 1);
   if (typeof key === 'string') {
-    const remove = (props.uploadHandler || uploadHandler).remove;
+    const remove = (props.uploadHandler || defaultUploadHandler).remove;
     if (remove) {
       remove(key);
     }

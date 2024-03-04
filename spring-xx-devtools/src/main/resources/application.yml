@@ -1,0 +1,6 @@
+# Random port
+server:
+  port: 0
+spring:
+  freemarker:
+    enabled: false

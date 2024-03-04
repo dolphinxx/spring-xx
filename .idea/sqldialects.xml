@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/spring-xx-core/src/test/resources/schema.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/spring-xx-admin/src/main/resources/init/schema.sql" dialect="MySQL" />
+  </component>
+  <component name="SqlResolveMappings">
+    <file url="file://$PROJECT_DIR$/spring-xx-admin" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;6a4537d3-60ae-45ac-a84c-196d8bed02db&quot;    },    &quot;name&quot;:{     &quot;@qname&quot;:&quot;f8fd6d27-9dd7-4810-94da-715a776c8057&quot;    }   }  } }}" />
+    <file url="file://$PROJECT_DIR$/spring-xx-sample" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;4ac35df5-55f8-4f5d-b0b1-7ba7a345d4f0&quot;    },    &quot;name&quot;:{     &quot;@qname&quot;:&quot;8719f3c4-23c5-4eac-b509-02495ad38cf7&quot;    }   }  } }}" />
+    <file url="PROJECT" scope="" />
   </component>
 </project>

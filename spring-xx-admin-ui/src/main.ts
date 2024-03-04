@@ -15,11 +15,13 @@ import {registerPlugins} from '@/plugins'
 import '@/styles/main.scss';
 import zhCN from "date-fns/locale/zh-CN";
 import {LocalizationKey} from "@/symbols";
+import {setLoginDelegate} from "@/api/request";
+import {useAppStore} from "@/store/app";
 
 window.__APP__ = {
   storagePrefix: import.meta.env.VITE_STORAGE_PREFIX,
 };
-globalThis.hasValue = (v:any) => v !== undefined && v !== null;
+globalThis.hasValue = (v: any) => v !== undefined && v !== null;
 
 const app = createApp(App)
 
@@ -28,3 +30,7 @@ app.provide<Localization>(LocalizationKey, {timezone: 'Asia/Shanghai', locale: '
 registerPlugins(app)
 
 app.mount('#app')
+
+const appStore = useAppStore();
+
+setLoginDelegate(() => appStore.toggleLoginDialog(true));
